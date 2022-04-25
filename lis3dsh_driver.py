@@ -14,8 +14,6 @@ leds = [l1,l4,l2,l3]
 led_px, led_nx, led_py, led_ny = LED(1), LED(2), LED(3), LED(4) 
 
 def read_register_value(address = 0x00, nb_bytes = 0):
-    """
-    """
     CS.low()
     SPI_1.send(address | 0x80)
  
@@ -39,8 +37,6 @@ def write_data_in_register(address = 0x00, value = 0x00):
 
 
 def read_acceleration(add):
-    """
-    """
     low = read_register_value(address= add, nb_bytes=1)
     high = read_register_value(address= add+1, nb_bytes=1)
 
@@ -74,45 +70,35 @@ def turn_off_led():
     for led in leds:
         led.off()
 
-while True:
-    print("==========  New data  ===========")
-    x_accel = read_acceleration(0x28)
-    y_accel = read_acceleration(0x2A)
-    z_accel = read_acceleration(0x2C)
-    
-    if x_accel > 300:
-        turn_off_led()
-        l1.on()
-    elif x_accel < 200:
-        turn_off_led()
+def get_acc_value():
+    who_i_am = read_register_value(address=0x0F, nb_bytes = 1)
+    x_accel = 0
+    if(who_i_am[0] == 0x3F):
+        print("==========  New data  ===========")
+        x_accel = read_acceleration(0x28)
+        
+        if x_accel > 300:
+            turn_off_led()
+            l1.on()
+        elif x_accel < 200:
+            turn_off_led()
 
-    if x_accel < -300:
-        turn_off_led()
-        l3.on()
-    elif x_accel < -200:
-        turn_off_led()
+        if x_accel < -300:
+            turn_off_led()
+            l3.on()
+        elif x_accel < -200:
+            turn_off_led()
 
-    if y_accel > 300:
-        turn_off_led()
-        l4.on()
-    elif y_accel < -200:
-        turn_off_led()
+        pyb.delay(10)
+        print(f"x accel : {x_accel}")
+    else:
+        print("ACC NO AVAILABLE")
 
-    if y_accel < -300:
-        turn_off_led()
-        l2.on()
-    elif y_accel < -200:
-        turn_off_led()
-
-    pyb.delay(10)
-    print(f"x accel : {x_accel}")
-    print(f"y accel : {y_accel}")
-    print(f"z accel : {z_accel}")
-    #print("x accel : {0} {1}", x_accel[0], x_accel[1])
+    return x_accel
 
 """
 LED placement on STM32 : 
-            pyb.LED(3)
-pyb.LED(2)              pyb.LED(1)
-            pyb.LED(4)  
+              pyb.LED(3)
+pyb.LED(2) l3          l1 pyb.LED(1) 
+              pyb.LED(4)  
 """

@@ -99,7 +99,6 @@ thon = """
 """
 
 tunnel_down = """
-                          
  ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️  
  ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️  
  ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️  
@@ -107,7 +106,6 @@ tunnel_down = """
 """
 
 tunnel_down_shadow = """
-                          
  ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️  
  ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️  
  ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️  
@@ -119,7 +117,6 @@ tunnel_up = """
  ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️  
  ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️  
  ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️  
-                          
 """
 
 tunnel_base = """
@@ -258,18 +255,17 @@ def draw_nothing(col):
                 # 56
 def draw_tunnels_down(x,y):
     draw_element(tunnel_down, x, y)
-    start_drawing_bases = y + 5
-    y += 5
-    for base in range(0, (WINDOW_DOWN-start_drawing_bases)):
+    y += 4
+    while(y<WINDOW_HEIGHT):
         draw_element(tunnel_base, x, y)
         y += 1
     
 def draw_tunnels_up(x,y):
     draw_element(tunnel_up, x, y)
-    start_drawing_bases = y
-    for base in range(0, (start_drawing_bases)):
-        draw_element(tunnel_base, x, y)
+    while(y):
         y -= 1
+        draw_element(tunnel_base, x, y)
+        
 
 def game_over():
     clear_screen()
@@ -277,7 +273,6 @@ def game_over():
     draw_element(try_again, screen_placement(WINDOW_LENGTH, 62, 0), 45)
     delay(3000)
     clear_screen()
-    
     # need to exit while loop
 
 def splash_screen_ending():
@@ -286,3 +281,47 @@ def splash_screen_ending():
     draw_element(SEE_YOU_SOON, screen_placement(WINDOW_LENGTH, 22, 0), 35)
     delay(3000)
     clear_screen()
+
+
+def draw_button( button, x, y):
+    for index, line in enumerate(button.splitlines()):
+        move(x, y+index)
+        uart.write(line)
+
+def user_name():
+    move(10,10)
+    uart.write("ENTER YOUR de :")
+    username = input("ENTER YOUR NAME")
+    uart.write(username)
+    
+
+def draw_last_score(x, y):
+    data = []
+    with open('best_scores.txt', 'r') as file_records:
+        data = file_records.readlines()
+        
+    if data:
+        last_score =  data[-1]
+    else:
+        last_score = '0'
+
+    move(x, y)
+    uart.write(LAST_SCORE + last_score)
+
+def add_current_score(name, score):
+    with open('best_scores.txt', 'w') as file_records:
+        data = file_records.readlines()
+    pass
+
+def draw_menu():
+    draw_element(game_name,screen_placement(WINDOW_LENGTH, 130, 0), 10)
+    draw_element(P1,screen_placement(WINDOW_LENGTH, 35, 0), 25)
+    draw_button(button_start2, screen_placement(WINDOW_LENGTH, 34, 1), 35)
+    draw_button(button_quit2,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 34, 1), 35)
+    draw_element(arrows, screen_placement(WINDOW_LENGTH, 30, 0), 32)
+    draw_element(HELP, screen_placement(WINDOW_LENGTH, 50, 0),50 )
+    draw_last_score(200,58)
+
+
+def counter_timer(t_counter):
+    print("1")

@@ -3,6 +3,8 @@ from commun import *
 import home_menu
 import pyb
 import random
+import lis3dsh_driver
+from pyb import Timer
 
 end_game = False
 game_is_running = False
@@ -10,6 +12,7 @@ choose_your_player = False
 
 x = 25
 y = 30
+t_counter = Timer(4, freq=1)
 
 score_counter = 0
 
@@ -18,35 +21,26 @@ x2 = 190
 
 i = 0
 erase_old_tunnel = False
+start_or_quit = 0
 
 splash_screen()
 
 while(not end_game):
-    debug()
+    draw_menu()
 
-    #draw_element(game_name_2,((WINDOW_LENGTH//2)-(130//2)), 10)
-    #draw_element(P1,((WINDOW_LENGTH//2)-(35//2)), 25)
-    #home_menu.draw_button(button_start2, (((WINDOW_LENGTH//2)//2)-34//2), 35)
-    #home_menu.draw_button(button_quit2,(WINDOW_LENGTH//2)+(((WINDOW_LENGTH//2)//2)-34//2), 35)
-    #home_menu.draw_last_score(200,58)
-    #draw_element(arrows, ((WINDOW_LENGTH//2)-15), 32)
-    #draw_element(HELP, ((WINDOW_LENGTH//2)-50//2),50 )
-    #draw_element(HELP2, ((WINDOW_LENGTH//2)-50//2), 53)
+    while(-300 < start_or_quit < 300):
+        start_or_quit = lis3dsh_driver.get_acc_value()
+        print("startorquit : ", start_or_quit)
+        if start_or_quit < -300:
+            game_is_running = True 
+            x,y = 25, 30
+            clear_screen()
+            t_counter.callback(counter_timer)
+        elif start_or_quit > 300:
+            end_game = True
 
-    draw_element(game_name,screen_placement(WINDOW_LENGTH, 130, 0), 10)
-    draw_element(P1,screen_placement(WINDOW_LENGTH, 35, 0), 25)
-    home_menu.draw_button(button_start2, screen_placement(WINDOW_LENGTH, 34, 1), 35)
-    home_menu.draw_button(button_quit2,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 34, 1), 35)
-    draw_element(arrows, screen_placement(WINDOW_LENGTH, 30, 0), 32)
-    draw_element(HELP, screen_placement(WINDOW_LENGTH, 50, 0),50 )
-    home_menu.draw_last_score(200,58)
-    
-    x = 25
-    y = 30
-    delay(5000)
-    clear_screen()
-    game_is_running = True  
     while(game_is_running):
+        start_or_quit = 0
         if (y > 5) and (y < 45):
             print(f"y = {y}")
             if push_button.value():
@@ -65,26 +59,24 @@ while(not end_game):
                 game_over()
                 game_is_running = False
                 break
-
+        random_data = random.randrange(0,67)
+        print(random_data)
+        
         tunnel_base_up = random.randrange(0, 40)
         draw_tunnels_down(x1, 40)
-        #draw_tunnels_down(x2, 50)
         draw_tunnels_up(x1, 20)
-        #draw_tunnels_up(x2, 30)
 
         x1 -= 1
-        #x2 -= 1
         if (x1 == 0):
             score_counter+=1
             erase_old_tunnel = True   
             x1 = 200
-        #if (x2 == 0):
-        #    erase_old_tunnel = True   
-        #    x2 = 200
-        
+
         if erase_old_tunnel:
             i+=1
             draw_nothing(i)
             if i == 24:
                 erase_old_tunnel = False
                 i=0
+
+splash_screen_ending()
