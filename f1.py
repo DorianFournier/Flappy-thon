@@ -1,16 +1,17 @@
 from constants import *
 from commun import *
-from home_menu import *
+import home_menu
 import pyb
+import random
 
-home_menu = Home_menu()
 end_game = False
 game_is_running = False
+choose_your_player = False
 
 x = 25
 y = 30
 
-counter = 0
+score_counter = 0
 
 x1 = 60
 x2 = 190
@@ -20,23 +21,38 @@ erase_old_tunnel = False
 
 splash_screen()
 
+move((WINDOW_LENGTH//2), WINDOW_HEIGHT//2)
+uart.write("#")
+delay(3000)
+print((((WINDOW_LENGTH//2)//2)-34//2))
+
 while(not end_game):
-    draw_element(game_name, 25, 20)
-    home_menu.draw_button(button_start, 30, 40)
-    home_menu.draw_button(button_quit, 60, 40)
-    # aera button start :
-    # 30,40 -----(20)-----  50,40
-    # -
-    # -
-    # -
-    # 30,44 -----(20)-----  50,44
+    move((WINDOW_LENGTH//2), WINDOW_HEIGHT//2)
+    uart.write("#")
+
+    move((WINDOW_LENGTH//2)//2, WINDOW_HEIGHT//2)
+    uart.write("#")
+
+    move(238- ((WINDOW_LENGTH//2)//2), WINDOW_HEIGHT//2)
+    uart.write("#")
+
+    draw_element(game_name_2,((WINDOW_LENGTH//2)-(130//2)), 10)
+    draw_element(P1,((WINDOW_LENGTH//2)-(35//2)), 25)
+    home_menu.draw_button(button_start2, (((WINDOW_LENGTH//2)//2)-34//2), 35)
+    home_menu.draw_button(button_quit2,(WINDOW_LENGTH//2)+(((WINDOW_LENGTH//2)//2)-34//2), 35)
+    home_menu.draw_last_score(200,58)
+    #home_menu.user_name()
+    draw_element(arrows, ((WINDOW_LENGTH//2)-15), 32)
+    draw_element(HELP, ((WINDOW_LENGTH//2)-50//2),50 )
+    draw_element(HELP2, ((WINDOW_LENGTH//2)-50//2), 53)
+  
+
     x = 25
     y = 30
     delay(5000)
     clear_screen()
-    game_is_running = True
+    #game_is_running = True  
     while(game_is_running):
-        counter += 1
         if (y > 5) and (y < 45):
             print(f"y = {y}")
             if push_button.value():
@@ -56,19 +72,21 @@ while(not end_game):
                 game_is_running = False
                 break
 
+        tunnel_base_up = random.randrange(0, 40)
         draw_tunnels_down(x1, 40)
-        draw_tunnels_down(x2, 50)
+        #draw_tunnels_down(x2, 50)
         draw_tunnels_up(x1, 20)
-        draw_tunnels_up(x2, 30)
+        #draw_tunnels_up(x2, 30)
 
         x1 -= 1
-        x2 -= 1
+        #x2 -= 1
         if (x1 == 0):
+            score_counter+=1
             erase_old_tunnel = True   
             x1 = 200
-        if (x2 == 0):
-            erase_old_tunnel = True   
-            x2 = 200
+        #if (x2 == 0):
+        #    erase_old_tunnel = True   
+        #    x2 = 200
         
         if erase_old_tunnel:
             i+=1
