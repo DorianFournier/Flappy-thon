@@ -21,37 +21,31 @@ erase_old_tunnel = False
 
 splash_screen()
 
-move((WINDOW_LENGTH//2), WINDOW_HEIGHT//2)
-uart.write("#")
-delay(3000)
-print((((WINDOW_LENGTH//2)//2)-34//2))
-
 while(not end_game):
-    move((WINDOW_LENGTH//2), WINDOW_HEIGHT//2)
-    uart.write("#")
+    debug()
 
-    move((WINDOW_LENGTH//2)//2, WINDOW_HEIGHT//2)
-    uart.write("#")
+    #draw_element(game_name_2,((WINDOW_LENGTH//2)-(130//2)), 10)
+    #draw_element(P1,((WINDOW_LENGTH//2)-(35//2)), 25)
+    #home_menu.draw_button(button_start2, (((WINDOW_LENGTH//2)//2)-34//2), 35)
+    #home_menu.draw_button(button_quit2,(WINDOW_LENGTH//2)+(((WINDOW_LENGTH//2)//2)-34//2), 35)
+    #home_menu.draw_last_score(200,58)
+    #draw_element(arrows, ((WINDOW_LENGTH//2)-15), 32)
+    #draw_element(HELP, ((WINDOW_LENGTH//2)-50//2),50 )
+    #draw_element(HELP2, ((WINDOW_LENGTH//2)-50//2), 53)
 
-    move(238- ((WINDOW_LENGTH//2)//2), WINDOW_HEIGHT//2)
-    uart.write("#")
-
-    draw_element(game_name_2,((WINDOW_LENGTH//2)-(130//2)), 10)
-    draw_element(P1,((WINDOW_LENGTH//2)-(35//2)), 25)
-    home_menu.draw_button(button_start2, (((WINDOW_LENGTH//2)//2)-34//2), 35)
-    home_menu.draw_button(button_quit2,(WINDOW_LENGTH//2)+(((WINDOW_LENGTH//2)//2)-34//2), 35)
+    draw_element(game_name,screen_placement(WINDOW_LENGTH, 130, 0), 10)
+    draw_element(P1,screen_placement(WINDOW_LENGTH, 35, 0), 25)
+    home_menu.draw_button(button_start2, screen_placement(WINDOW_LENGTH, 34, 1), 35)
+    home_menu.draw_button(button_quit2,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 34, 1), 35)
+    draw_element(arrows, screen_placement(WINDOW_LENGTH, 30, 0), 32)
+    draw_element(HELP, screen_placement(WINDOW_LENGTH, 50, 0),50 )
     home_menu.draw_last_score(200,58)
-    #home_menu.user_name()
-    draw_element(arrows, ((WINDOW_LENGTH//2)-15), 32)
-    draw_element(HELP, ((WINDOW_LENGTH//2)-50//2),50 )
-    draw_element(HELP2, ((WINDOW_LENGTH//2)-50//2), 53)
-  
-
+    
     x = 25
     y = 30
     delay(5000)
     clear_screen()
-    #game_is_running = True  
+    game_is_running = True  
     while(game_is_running):
         if (y > 5) and (y < 45):
             print(f"y = {y}")
