@@ -19,8 +19,6 @@ flag_game_running = False
 flag_menu = False
 flag_splash_screen = True
 
-
-
 splash_screen()
 
 while True:
@@ -65,3 +63,19 @@ while True:
             i=0
     
     # 🟧🟨🟦🟩🟪🟫🟥
+
+# y = 40 (40 + 12 = 52 au total )
+# si y = 40 : dessine la base du tunnel à 40 donc fin de base à 46, 
+# il faut donc dessiner de 46 à 56 des bases
+# dans l'exemple :
+# y = 40, 40+6(taille haut tunnel) = 46 => 56 - 46 = 10, a dessiner aux ordonnées 
+                # 47
+                # 48
+                # ...
+                # 56
+def draw_tunnels_down(x,y):
+    draw_element(tunnel_down, x, y)
+    y += 4
+    while(y<WINDOW_HEIGHT):
+        draw_element(tunnel_base, x, y)
+        y += 1

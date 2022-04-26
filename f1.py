@@ -1,41 +1,33 @@
-from constants import *
 from commun import *
 import pyb
-import random
 import lis3dsh_driver
+
 from pyb import Timer
 
 end_game = False
 game_is_running = False
-choose_your_player = False
+erase_old_tunnel = False
 
 x = 25
 y = 30
-
 score_counter = 0
-
 x1 = 60
-x2 = 190
-
 i = 0
-erase_old_tunnel = False
 start_or_quit = 0
 
-splash_screen()
-player = " "
+splash_screen_loading()
 
 while(not end_game):
     draw_menu()
     
     while(-300 < start_or_quit < 300):
         start_or_quit = lis3dsh_driver.get_acc_value()
-        print("startorquit : ", start_or_quit)
         if start_or_quit < -300:
             game_is_running = True 
             x,y = 25, 30
             clear_screen()
             global player_caracter
-            player_caracter = choose_your_player_func()
+            player_caracter = choose_your_player()
         elif start_or_quit > 300:
             end_game = True
 
@@ -59,8 +51,6 @@ while(not end_game):
                 game_over()
                 game_is_running = False
                 break
-        #random_data = random.randrange(0,67)
-        #print(random_data)
         
         tunnel_base_up = random.randrange(0, 40)
         draw_tunnels_down(x1, 40)
