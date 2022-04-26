@@ -1,6 +1,5 @@
 from constants import *
 from commun import *
-import home_menu
 import pyb
 import random
 import lis3dsh_driver
@@ -12,7 +11,7 @@ choose_your_player = False
 
 x = 25
 y = 30
-t_counter = Timer(4, freq=1)
+#t_counter = Timer(4, freq=1)
 
 score_counter = 0
 
@@ -27,6 +26,7 @@ splash_screen()
 
 while(not end_game):
     draw_menu()
+    #debug()
 
     while(-300 < start_or_quit < 300):
         start_or_quit = lis3dsh_driver.get_acc_value()
@@ -35,7 +35,7 @@ while(not end_game):
             game_is_running = True 
             x,y = 25, 30
             clear_screen()
-            t_counter.callback(counter_timer)
+            #t_counter.callback(counter_timer)
         elif start_or_quit > 300:
             end_game = True
 
