@@ -23,11 +23,11 @@ erase_old_tunnel = False
 start_or_quit = 0
 
 splash_screen()
+player = " "
 
 while(not end_game):
     draw_menu()
-    #debug()
-
+    
     while(-300 < start_or_quit < 300):
         start_or_quit = lis3dsh_driver.get_acc_value()
         print("startorquit : ", start_or_quit)
@@ -36,11 +36,15 @@ while(not end_game):
             x,y = 25, 30
             clear_screen()
             #t_counter.callback(counter_timer)
+            choose_your_player_func()
         elif start_or_quit > 300:
             end_game = True
 
     while(game_is_running):
         start_or_quit = 0
+
+        #choose_your_player_func()
+        clear_screen()
         if (y > 5) and (y < 45):
             print(f"y = {y}")
             if push_button.value():
