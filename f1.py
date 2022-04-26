@@ -11,7 +11,6 @@ choose_your_player = False
 
 x = 25
 y = 30
-#t_counter = Timer(4, freq=1)
 
 score_counter = 0
 
@@ -35,24 +34,21 @@ while(not end_game):
             game_is_running = True 
             x,y = 25, 30
             clear_screen()
-            #t_counter.callback(counter_timer)
-            choose_your_player_func()
+            global player_caracter
+            player_caracter = choose_your_player_func()
         elif start_or_quit > 300:
             end_game = True
 
     while(game_is_running):
         start_or_quit = 0
-
-        #choose_your_player_func()
-        clear_screen()
         if (y > 5) and (y < 45):
             print(f"y = {y}")
             if push_button.value():
                 y = y-1
-                draw_element(birdython, x,y)
+                draw_element(player_caracter, x,y)
             else:
                 y = y+1
-                draw_element(birdython, x,y)
+                draw_element(player_caracter, x,y)
         else:
             print(f"y = {y}")
             print("do not move")
@@ -63,8 +59,8 @@ while(not end_game):
                 game_over()
                 game_is_running = False
                 break
-        random_data = random.randrange(0,67)
-        print(random_data)
+        #random_data = random.randrange(0,67)
+        #print(random_data)
         
         tunnel_base_up = random.randrange(0, 40)
         draw_tunnels_down(x1, 40)

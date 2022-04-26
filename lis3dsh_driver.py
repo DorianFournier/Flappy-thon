@@ -1,4 +1,3 @@
-from commun import move
 import pyb 
 from pyb import SPI, Pin, LED
 
