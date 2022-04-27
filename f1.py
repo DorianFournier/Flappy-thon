@@ -14,6 +14,7 @@ score_counter = 0
 x1 = 60
 i = 0
 start_or_quit = 0
+player_caracter = """"""
 
 splash_screen_loading()
 
@@ -25,8 +26,7 @@ while(not end_game):
         if start_or_quit < -300:
             game_is_running = True 
             x,y = 25, 30
-            clear_screen()
-            global player_caracter
+            #global player_caracter
             player_caracter = choose_your_player()
         elif start_or_quit > 300:
             end_game = True
@@ -36,11 +36,14 @@ while(not end_game):
         if (y > 5) and (y < 45):
             print(f"y = {y}")
             if push_button.value():
-                y = y-1
-                draw_element(player_caracter, x,y)
+                if y == 6:
+                    pass
+                else:
+                    y = y-1
+                draw_element(player_caracter, x, y)
             else:
                 y = y+1
-                draw_element(player_caracter, x,y)
+                draw_element(player_caracter, x, y)
         else:
             print(f"y = {y}")
             print("do not move")

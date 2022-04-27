@@ -45,16 +45,13 @@ def convert_value(high, low):
     high = int.from_bytes(high, "big", True)
     low  = int.from_bytes(low, "big", False)
 
-    print("high : ", high)
-    print("low : ", low)
-
     data = (high << 8) | low
     
     if(data & 0x8000):
         data = data - (1<<16)
     
     data = data * 0.06
-    print("Data with conversion to mg : ", data)
+    #print("Data with conversion to mg : ", data)
 
     return data
 
@@ -73,7 +70,7 @@ def get_acc_value():
     who_i_am = read_register_value(address=0x0F, nb_bytes = 1)
     x_accel = 0
     if(who_i_am[0] == 0x3F):
-        print("==========  New data  ===========")
+        #print("==========  New data  ===========")
         x_accel = read_acceleration(0x28)
         
         if x_accel > 300:
@@ -89,7 +86,7 @@ def get_acc_value():
             turn_off_led()
 
         pyb.delay(10)
-        print(f"x accel : {x_accel}")
+        #print(f"x accel : {x_accel}")
     else:
         print("ACC NO AVAILABLE")
 

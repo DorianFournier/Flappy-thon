@@ -3,8 +3,9 @@ import lis3dsh_driver
 import random
 
 from pyb import UART, Pin, Timer, delay
-from constants import PLAYER_CHOOSE, WINDOW_HEIGHT, WINDOW_LENGTH, SCORE, SEE_YOU_SOON, LAST_SCORE, HELP
+from constants import GAME_START, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, PLAYER_CHOOSE, WINDOW_HEIGHT, WINDOW_LENGTH, SCORE, LAST_SCORE, HELP
 
+### Texts
 button_start = """
  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 ▐▌                                       ▐▌
@@ -42,24 +43,39 @@ game_name_label = """
 """
 
 try_again_label = """
- ▀▀▀██▀▀▀▐█▀▀▀▀█ ▌    ▐  ▐█▀▀▀▀█▌▐█▀▀▀▀▀▐█▀▀▀▀█▌▐▌▐▌    ▐▌
-    ▐▌   ▐█▄▄▄▄█ █▄▄▄▄█  ▐█▄▄▄▄█▌▐▌     ▐█▄▄▄▄█▌▐▌▐▌▐▌  ▐▌
-    ▐▌   ▐▌  ▐▌    ▐▌    ▐▌    ▐▌▐▌ ▀▀▀█▐▌    ▐▌▐▌▐▌  ▐▌▐▌
-    ▐▌   ▐▌   ▐▌   ▐▌    ▐▌    ▐▌▐█▄▄▄▄█▐▌    ▐▌▐▌▐▌    ▐▌
+ ▀▀▀██▀▀▀▐█▀▀▀▀█ ▌    ▐    ▐█▀▀▀▀█▌▐█▀▀▀▀▀▐█▀▀▀▀█▌▐▌▐▌    ▐▌
+    ▐▌   ▐█▄▄▄▄█ █▄▄▄▄█    ▐█▄▄▄▄█▌▐▌     ▐█▄▄▄▄█▌▐▌▐▌▐▌  ▐▌
+    ▐▌   ▐▌  ▐▌    ▐▌      ▐▌    ▐▌▐▌ ▀▀▀█▐▌    ▐▌▐▌▐▌  ▐▌▐▌
+    ▐▌   ▐▌   ▐▌   ▐▌      ▐▌    ▐▌▐█▄▄▄▄█▐▌    ▐▌▐▌▐▌    ▐▌
 """
 
 loading_label = """
-▐▌    ▐█▀▀▀█▌▐█▀▀▀█▌▐█▀▀▄  ▐▌▐▌    ▐▌▐█▀▀▀▀▀
-▐▌    ▐▌   ▐▌▐█▄▄▄█▌▐▌   ▐▌▐▌▐▌▐▌  ▐▌▐▌     
-▐▌    ▐▌   ▐▌▐▌   ▐▌▐▌   ▐▌▐▌▐▌  ▐▌▐▌▐▌ ▀▀▀█
-▐█▄▄▄▄▐█▄▄▄█▌▐▌   ▐▌▐█▄▄▀  ▐▌▐▌    ▐▌▐█▄▄▄▄█
+▐▌    ▐█▀▀▀█▌▐█▀▀▀█▌▐█▀▀▄  ▐▌▐▌    ▐▌▐█▀▀▀▀▀ 
+▐▌    ▐▌   ▐▌▐█▄▄▄█▌▐▌   ▐▌▐▌▐▌▐▌  ▐▌▐▌      
+▐▌    ▐▌   ▐▌▐▌   ▐▌▐▌   ▐▌▐▌▐▌  ▐▌▐▌▐▌ ▀▀▀█ 
+▐█▄▄▄▄▐█▄▄▄█▌▐▌   ▐▌▐█▄▄▀  ▐▌▐▌    ▐▌▐█▄▄▄▄█ 
+"""
+
+loading_point = """
+██  
+"""
+
+loading_point_shadow = """
+   
 """
 
 choose_player_label = """
-▐█▀▀▀▀▐▌   ▐▌▐█▀▀▀█▌▐█▀▀▀█▌▐█▀▀▀█▐▌▀▀▀▀    ▌    ▐▐█▀▀▀█▌▐▌   ▐▌▐█▀▀▀▀█    ▐█▀▀▀▀█▐▌    ▐█▀▀▀▀█▌▌    ▐▐▌▀▀▀▀▐█▀▀▀▀█ 
+▐█▀▀▀▀▐▌   ▐▌▐█▀▀▀█▌▐█▀▀▀█▌▐█▀▀▀█▐█▀▀▀▀    ▌    ▐▐█▀▀▀█▌▐▌   ▐▌▐█▀▀▀▀█    ▐█▀▀▀▀█▐▌    ▐█▀▀▀▀█▌▌    ▐▐█▀▀▀▀▐█▀▀▀▀█ 
 ▐▌    ▐▌   ▐▌▐▌   ▐▌▐▌   ▐▌▐█▄▄▄▄▐▌        █▄▄▄▄█▐▌   ▐▌▐▌   ▐▌▐█▄▄▄▄█    ▐█▄▄▄▄█▐▌    ▐█▄▄▄▄█▌█▄▄▄▄█▐▌    ▐█▄▄▄▄█
 ▐▌    ▐█▄▄▄█▌▐▌   ▐▌▐▌   ▐▌     █▐▌▀▀▀       ▐▌  ▐▌   ▐▌▐▌   ▐▌▐▌  ▐▌     ▐▌     ▐▌    ▐▌    ▐▌  ▐▌  ▐▌▀▀▀ ▐▌  ▐▌
-▐█▄▄▄▄▐▌   ▐▌▐█▄▄▄█▌▐█▄▄▄█▌▐█▄▄▄█▐▌▄▄▄▄      ▐▌  ▐█▄▄▄█▌▐█▄▄▄█▌▐▌   ▐▌    ▐▌     ▐█▄▄▄▄▐▌    ▐▌  ▐▌  ▐▌▄▄▄▄▐▌   ▐▌ 
+▐█▄▄▄▄▐▌   ▐▌▐█▄▄▄█▌▐█▄▄▄█▌▐█▄▄▄█▐█▄▄▄▄      ▐▌  ▐█▄▄▄█▌▐█▄▄▄█▌▐▌   ▐▌    ▐▌     ▐█▄▄▄▄▐▌    ▐▌  ▐▌  ▐█▄▄▄▄▐▌   ▐▌ 
+"""
+
+see_you_soon_label = """\
+▐█▀▀▀█▐█▀▀▀▀▐█▀▀▀▀    ▌    ▐▐█▀▀▀█▌▐▌   ▐▌    ▐█▀▀▀█▐█▀▀▀█▌▐█▀▀▀█▌▐▌    ▐▌
+▐█▄▄▄▄▐▌    ▐▌        █▄▄▄▄█▐▌   ▐▌▐▌   ▐▌    ▐█▄▄▄▄▐▌   ▐▌▐▌   ▐▌▐▌▐▌  ▐▌    
+     █▐▌▀▀▀ ▐▌▀▀▀       ▐▌  ▐▌   ▐▌▐▌   ▐▌         █▐▌   ▐▌▐▌   ▐▌▐▌  ▐▌▐▌
+▐█▄▄▄█▐█▄▄▄▄▐█▄▄▄▄      ▐▌  ▐█▄▄▄█▌▐█▄▄▄█▌    ▐█▄▄▄█▐█▄▄▄█▌▐█▄▄▄█▌▐▌    ▐▌
 """
 
 game_over_label = """
@@ -76,6 +92,51 @@ game_over_label = """
  ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀       ▀▀▀▀▀▀▀▀▀▀▀          ▀          ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀                                                                                                                 
 """
 
+counter_3 = """\
+ ▄▄▄▄▄▄▄▄▄▄ 
+ ▀▀▀▀▀▀▀▀▀█▌
+          ▐▌
+ ▄▄▄▄▄▄▄▄▄█▌
+ ▀▀▀▀▀▀▀▀▀█▌
+          ▐▌
+ ▄▄▄▄▄▄▄▄▄█▌
+ ▀▀▀▀▀▀▀▀▀▀ 
+"""
+
+counter_2 = """\
+ ▄▄▄▄▄▄▄▄▄▄ 
+ ▀▀▀▀▀▀▀▀▀█▌
+          ▐▌
+          ▐▌
+ ▄▄▄▄▄▄▄▄▄█▌
+▐█▀▀▀▀▀▀▀▀▀ 
+▐█▄▄▄▄▄▄▄▄▄ 
+ ▀▀▀▀▀▀▀▀▀▀ 
+"""
+
+counter_1 = """\
+     ▄▄     
+    ▄█▌     
+   ▐▌▐▌     
+  ▐▌ ▐▌     
+ ▀   ▐▌     
+     ▐▌     
+ ▄▄▄▄██▄▄▄▄ 
+ ▀▀▀▀▀▀▀▀▀▀ 
+"""
+
+counter_0 = """\
+ ▄▄▄▄▄▄▄▄▄▄ ▄▄▄▄▄▄▄▄▄ 
+▐█▀▀▀▀▀▀▀▀▀▐█▀▀▀▀▀▀▀█▌
+▐▌         ▐▌       ▐▌
+▐▌ ▄▄▄▄▄▄▄ ▐▌       ▐▌
+▐▌ ▀▀▀▀▀▀█▌▐▌       ▐▌
+▐▌       ▐▌▐▌       ▐▌
+▐█▄▄▄▄▄▄▄█▌▐█▄▄▄▄▄▄▄█▌
+ ▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀ 
+"""
+
+### Players
 birdython_player = """
                                    
             ⬛️⬛️⬛️⬛️⬛️⬛️          
@@ -107,7 +168,6 @@ thon_player = """
 """
 
 ### Tunnels
-
 tunnel_down = """\
  ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️ 
  ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
@@ -155,6 +215,7 @@ cursor = """\
  ⬛🟦🟦⬛🟨🟨⬛ 
  ⬛⬛⬛⬛⬛⬛⬛ 
 """
+
 cursor_shadow = """\
               
               
@@ -174,16 +235,18 @@ push_button = Pin("PA0", Pin.IN, Pin.PULL_DOWN)
 t_counter = Timer(4, freq=2)
 
 def counter_timer(t_counter):
-    global toggle 
+    global toggle
     global counter_var
     counter_var += 1
     toggle = not toggle
-    print("Toggle : ", toggle)
+    #print(f"Toggle : {toggle}\ncounter_var : {counter_var}")
 
-choose_player_flag = False
 toggle = False
 counter_var = 0
+
 t_counter.callback(counter_timer)
+
+choose_player_flag = False
 
 def clear_screen():
     uart.write("\x1b[2J\x1b[?25l")
@@ -211,7 +274,13 @@ def splash_screen_loading():
     clear_screen()
     draw_element(game_name_label, screen_placement(WINDOW_LENGTH, 130, 0), 20)
     draw_element(loading_label, screen_placement(WINDOW_LENGTH, 44, 0), 35)
-    delay(3000)
+
+    while (counter_var < 10):
+      print("counter_splash : ", counter_var)
+      if counter_var % 2 == 0:
+        blink_element(loading_point, loading_point_shadow, screen_placement(WINDOW_LENGTH, 44,0)+22,40)
+      else:
+        pass  
     clear_screen()
 
 def draw_nothing(col):
@@ -238,12 +307,11 @@ def game_over():
     draw_element(try_again_label, screen_placement(WINDOW_LENGTH, 62, 0), 45)
     delay(3000)
     clear_screen()
-    # need to exit while loop
 
 def splash_screen_ending():
     clear_screen()
     draw_element(game_name_label, screen_placement(WINDOW_LENGTH, 130, 0), 20)
-    draw_element(SEE_YOU_SOON, screen_placement(WINDOW_LENGTH, 22, 0), 35)
+    draw_element(see_you_soon_label, screen_placement(WINDOW_LENGTH, 74, 0), 35)
     delay(3000)
     clear_screen()
 
@@ -286,17 +354,22 @@ def blink_element(first_element, second_element, x,y):
       draw_element(second_element, x,y)
 
 def choose_your_player():
+    clear_screen()
     choose_player_flag = False
 
     draw_element(birdython_player, screen_placement(WINDOW_LENGTH, 22, 1), (WINDOW_HEIGHT//2) - 7)
-    draw_element(thon_player, (WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 20, 1),  (WINDOW_HEIGHT//2) - 7)
+    draw_element(thon_player, (WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 18, 1),  (WINDOW_HEIGHT//2) - 4)
     draw_element(choose_player_label, screen_placement(WINDOW_LENGTH, 115, 0),5)
+    draw_element(HELP_CHOOSE_PLAYER, screen_placement(WINDOW_LENGTH, 53, 0), 15)
 
-    delay(300)
+    counter_temp = counter_var
+    while (counter_var < counter_temp + 4):
+      print("counter :", counter_var)
+      blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,14,0), WINDOW_HEIGHT//2+15)
 
     while(not choose_player_flag):
-
-      blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,10,0), WINDOW_HEIGHT//2+15)
+      
+      blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,14,0), WINDOW_HEIGHT//2+15)
       choose_player_acc_data = lis3dsh_driver.get_acc_value()
       
       if choose_player_acc_data < -300:
@@ -307,17 +380,25 @@ def choose_your_player():
           choose_player_flag = True
     
     draw_element(cursor_shadow, screen_placement(WINDOW_LENGTH,10,0), WINDOW_HEIGHT//2+15)
-    counter_var = 0
-    while (counter_var < 840):
-      counter_var += 1
-      print(counter_var)
+    draw_element(HELP_CHOOSE_PLAYER_SHADOW,screen_placement(WINDOW_LENGTH, 53, 0), 15)
+
+    draw_element(GAME_START, screen_placement(WINDOW_LENGTH, 23, 0), 22)
+    counter_temp = counter_var
+    while (counter_var < counter_temp + 8):
       if player_choose == birdython_player:
         draw_element(PLAYER_CHOOSE + "BIRDYTHON PLAYER !", screen_placement(WINDOW_LENGTH, 33, 0), 45)
         blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH, 10, 1), (WINDOW_HEIGHT//2) +15)
       else:
         draw_element(PLAYER_CHOOSE + "THON PLAYER !", screen_placement(WINDOW_LENGTH, 28, 0), 45)
         blink_element(cursor, cursor_shadow, (WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 10, 1), (WINDOW_HEIGHT//2) +15)
-    
+      if counter_var == counter_temp:
+        draw_element(counter_3, screen_placement(WINDOW_LENGTH, 12, 0), screen_placement(WINDOW_HEIGHT, 8, 0))
+      if counter_var == (counter_temp + 2):
+        draw_element(counter_2, screen_placement(WINDOW_LENGTH, 12, 0), screen_placement(WINDOW_HEIGHT, 8, 0))
+      if counter_var == (counter_temp + 4):
+        draw_element(counter_1, screen_placement(WINDOW_LENGTH, 12, 0), screen_placement(WINDOW_HEIGHT, 8, 0))
+      if counter_var == (counter_temp + 6):
+        draw_element(counter_0, screen_placement(WINDOW_LENGTH, 22, 0), screen_placement(WINDOW_HEIGHT, 8, 0))
     clear_screen()
     return player_choose
 
