@@ -56,8 +56,14 @@ loading_label = """
 ▐█▄▄▄▄▐█▄▄▄█▌▐▌   ▐▌▐█▄▄▀  ▐▌▐▌    ▐▌▐█▄▄▄▄█ 
 """
 
-loading_point = """
-██  
+loading_bar_label = """
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+
+▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+"""
+
+loading_bar_content="""\
+░░░░░░░░░░
 """
 
 loading_point_shadow = """
@@ -76,6 +82,12 @@ see_you_soon_label = """\
 ▐█▄▄▄▄▐▌    ▐▌        █▄▄▄▄█▐▌   ▐▌▐▌   ▐▌    ▐█▄▄▄▄▐▌   ▐▌▐▌   ▐▌▐▌▐▌  ▐▌    
      █▐▌▀▀▀ ▐▌▀▀▀       ▐▌  ▐▌   ▐▌▐▌   ▐▌         █▐▌   ▐▌▐▌   ▐▌▐▌  ▐▌▐▌
 ▐█▄▄▄█▐█▄▄▄▄▐█▄▄▄▄      ▐▌  ▐█▄▄▄█▌▐█▄▄▄█▌    ▐█▄▄▄█▐█▄▄▄█▌▐█▄▄▄█▌▐▌    ▐▌
+"""
+
+score_label = """\
+▐█▀▀█▐█▀▀▀▐█▀▀█▌▐█▀▀▀█▐█▀▀▀▀ 
+▐█▄▄▄▐▌   ▐▌  ▐▌▐█▄▄▄█▐▌▄▄▄   
+▐█▄▄█▐█▄▄▄▐█▄▄█▌▐▌  ▐▌▐█▄▄▄▄
 """
 
 game_over_label = """
@@ -274,13 +286,14 @@ def splash_screen_loading():
     clear_screen()
     draw_element(game_name_label, screen_placement(WINDOW_LENGTH, 130, 0), 20)
     draw_element(loading_label, screen_placement(WINDOW_LENGTH, 44, 0), 35)
-
+    draw_element(loading_bar_label, screen_placement(WINDOW_LENGTH, 40, 0), 43)
+    i = 0
     while (counter_var < 10):
-      print("counter_splash : ", counter_var)
-      if counter_var % 2 == 0:
-        blink_element(loading_point, loading_point_shadow, screen_placement(WINDOW_LENGTH, 44,0)+22,40)
-      else:
-        pass  
+      delay(500)
+      if (counter_var % 2 == 0):
+        draw_element(loading_bar_content, screen_placement(WINDOW_LENGTH, 50, 0)+i, 45)
+      i += 5
+
     clear_screen()
 
 def draw_nothing(col):
@@ -291,7 +304,7 @@ def draw_nothing(col):
 def draw_tunnels_down(x,y):
     draw_element(tunnel_down, x, y)
     y += 4
-    while(y < WINDOW_HEIGHT):
+    while(y <= WINDOW_HEIGHT):
         draw_element(tunnel_base, x, y)
         y += 1
     
@@ -304,7 +317,7 @@ def draw_tunnels_up(x,y):
 def game_over():
     clear_screen()
     draw_element(game_over_label, screen_placement(WINDOW_LENGTH, 115, 0), 20)
-    draw_element(try_again_label, screen_placement(WINDOW_LENGTH, 62, 0), 45)
+    draw_element(try_again_label, screen_placement(WINDOW_LENGTH, 62, 0), 35)
     delay(3000)
     clear_screen()
 
@@ -341,9 +354,9 @@ def add_current_score(name, score):
 
 def draw_menu():
     draw_element(game_name_label,screen_placement(WINDOW_LENGTH, 130, 0), 10)
-    draw_element(button_start, screen_placement(WINDOW_LENGTH, 43, 1), 35)
-    draw_element(button_quit,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 43, 1), 35)
-    draw_element(arrows, screen_placement(WINDOW_LENGTH, 30, 0), 32)
+    draw_element(button_start, screen_placement(WINDOW_LENGTH, 43, 1), 33)
+    draw_element(button_quit,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 43, 1), 33)
+    draw_element(arrows, screen_placement(WINDOW_LENGTH, 30, 0), 30)
     draw_element(HELP, screen_placement(WINDOW_LENGTH, 50, 0),55)
     draw_last_score(200,58)
 

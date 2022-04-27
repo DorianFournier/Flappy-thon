@@ -4,34 +4,32 @@ import lis3dsh_driver
 
 from pyb import Timer
 
-end_game = False
-game_is_running = False
+end_game_state = False
+game_is_running_state = False
 erase_old_tunnel = False
-
-x = 25
-y = 30
 score_counter = 0
-x1 = 60
-i = 0
 start_or_quit = 0
 player_caracter = """"""
+i = 0
 
 splash_screen_loading()
 
-while(not end_game):
+while(not end_game_state):
     draw_menu()
     
     while(-300 < start_or_quit < 300):
         start_or_quit = lis3dsh_driver.get_acc_value()
         if start_or_quit < -300:
-            game_is_running = True 
-            x,y = 25, 30
-            #global player_caracter
+            game_is_running_state = True 
             player_caracter = choose_your_player()
         elif start_or_quit > 300:
-            end_game = True
+            end_game_state = True
 
-    while(game_is_running):
+    x = 30
+    y = screen_placement(WINDOW_HEIGHT, 14, 0)
+    x_tunnel = 200
+
+    while(game_is_running_state):
         start_or_quit = 0
         if (y > 5) and (y < 45):
             print(f"y = {y}")
@@ -45,28 +43,33 @@ while(not end_game):
                 y = y+1
                 draw_element(player_caracter, x, y)
         else:
-            print(f"y = {y}")
-            print("do not move")
             if(y == 5):
                 y = 6
             if(y == 45):
-                y = 44
                 game_over()
-                game_is_running = False
+                game_is_running_state = False
                 break
         
-        tunnel_base_up = random.randrange(0, 40)
-        draw_tunnels_down(x1, 40)
-        draw_tunnels_up(x1, 20)
+        draw_tunnels_down(x_tunnel, 50)
+        draw_tunnels_up(x_tunnel, 20)
 
-        x1 -= 1
-        if (x1 == 0):
+        x_tunnel -= 1
+        if (x_tunnel == 0):
             score_counter+=1
             erase_old_tunnel = True   
-            x1 = 200
+            x_tunnel = 200
+        
+        if (x+35) >= x_tunnel:
+            if y <= 20:
+                game_over()
+                game_is_running_state = False
+            if y+13 >= 50:
+                game_over()
+                game_is_running_state = False
+        
 
         if erase_old_tunnel:
-            i+=1
+            i += 1
             draw_nothing(i)
             if i == 24:
                 erase_old_tunnel = False
