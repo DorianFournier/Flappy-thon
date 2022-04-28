@@ -3,10 +3,10 @@ import lis3dsh_driver
 import random
 
 from pyb import UART, Pin, Timer, delay
-from constants import GAME_START, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, PLAYER_CHOOSE, WINDOW_HEIGHT, WINDOW_LENGTH, SCORE, LAST_SCORE, HELP
+from constants import GAME_START, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, PLAYER_CHOOSE, WINDOW_HEIGHT, WINDOW_HEIGHT_RUNNING_STATE, WINDOW_LENGTH, SCORE, LAST_SCORE, HELP
 
 ### Texts
-button_start = """
+button_start = """\
  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 ▐▌                                       ▐▌
 ▐▌ ▐█▀▀▀█ ▀▀▀██▀▀▀▐█▀▀▀█▌▐█▀▀▀█ ▀▀▀██▀▀▀ ▐▌
@@ -17,7 +17,7 @@ button_start = """
  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 """
 
-button_quit = """
+button_quit = """\
  ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 ▐▌                                       ▐▌
 ▐▌      ▐█▀▀▀█▌ ▐▌   ▐▌ ▐▌ ▀▀▀██▀▀▀      ▐▌
@@ -28,7 +28,7 @@ button_quit = """
  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
 """
 
-game_name_label = """
+game_name_label = """\
  ▄▄▄▄▄▄▄▄▄▄▄  ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄               ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄        ▄ 
 ▐░░░░░░░░░░░▌▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌             ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░▌      ▐░▌
 ▐░█▀▀▀▀▀▀▀▀▀ ▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌              ▀▀▀▀█░█▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌░▌     ▐░▌
@@ -39,24 +39,24 @@ game_name_label = """
 ▐░▌          ▐░▌          ▐░▌       ▐░▌▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌    ▐░▌▐░▌
 ▐░▌          ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌       ▐░▌▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░▌     ▐░▐░▌
 ▐░▌          ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░▌      ▐░░▌
- ▀            ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀                 ▀                         ▀       ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀        ▀▀                                                                                                                                
+ ▀            ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀                 ▀                         ▀       ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀        ▀▀ 
 """
 
-try_again_label = """
+try_again_label = """\
  ▀▀▀██▀▀▀▐█▀▀▀▀█ ▌    ▐    ▐█▀▀▀▀█▌▐█▀▀▀▀▀▐█▀▀▀▀█▌▐▌▐▌    ▐▌
     ▐▌   ▐█▄▄▄▄█ █▄▄▄▄█    ▐█▄▄▄▄█▌▐▌     ▐█▄▄▄▄█▌▐▌▐▌▐▌  ▐▌
     ▐▌   ▐▌  ▐▌    ▐▌      ▐▌    ▐▌▐▌ ▀▀▀█▐▌    ▐▌▐▌▐▌  ▐▌▐▌
     ▐▌   ▐▌   ▐▌   ▐▌      ▐▌    ▐▌▐█▄▄▄▄█▐▌    ▐▌▐▌▐▌    ▐▌
 """
 
-loading_label = """
+loading_label = """\
 ▐▌    ▐█▀▀▀█▌▐█▀▀▀█▌▐█▀▀▄  ▐▌▐▌    ▐▌▐█▀▀▀▀▀ 
 ▐▌    ▐▌   ▐▌▐█▄▄▄█▌▐▌   ▐▌▐▌▐▌▐▌  ▐▌▐▌      
 ▐▌    ▐▌   ▐▌▐▌   ▐▌▐▌   ▐▌▐▌▐▌  ▐▌▐▌▐▌ ▀▀▀█ 
 ▐█▄▄▄▄▐█▄▄▄█▌▐▌   ▐▌▐█▄▄▀  ▐▌▐▌    ▐▌▐█▄▄▄▄█ 
 """
 
-loading_bar_label = """
+loading_bar_label = """\
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 
 ▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀▀
@@ -66,11 +66,16 @@ loading_bar_content="""\
 ░░░░░░░░░░
 """
 
-loading_point_shadow = """
-   
+line_label = """\
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 """
 
-choose_player_label = """
+choose_player_label = """\
 ▐█▀▀▀▀▐▌   ▐▌▐█▀▀▀█▌▐█▀▀▀█▌▐█▀▀▀█▐█▀▀▀▀    ▌    ▐▐█▀▀▀█▌▐▌   ▐▌▐█▀▀▀▀█    ▐█▀▀▀▀█▐▌    ▐█▀▀▀▀█▌▌    ▐▐█▀▀▀▀▐█▀▀▀▀█ 
 ▐▌    ▐▌   ▐▌▐▌   ▐▌▐▌   ▐▌▐█▄▄▄▄▐▌        █▄▄▄▄█▐▌   ▐▌▐▌   ▐▌▐█▄▄▄▄█    ▐█▄▄▄▄█▐▌    ▐█▄▄▄▄█▌█▄▄▄▄█▐▌    ▐█▄▄▄▄█
 ▐▌    ▐█▄▄▄█▌▐▌   ▐▌▐▌   ▐▌     █▐▌▀▀▀       ▐▌  ▐▌   ▐▌▐▌   ▐▌▐▌  ▐▌     ▐▌     ▐▌    ▐▌    ▐▌  ▐▌  ▐▌▀▀▀ ▐▌  ▐▌
@@ -85,12 +90,12 @@ see_you_soon_label = """\
 """
 
 score_label = """\
-▐█▀▀█▐█▀▀▀▐█▀▀█▌▐█▀▀▀█▐█▀▀▀▀ 
-▐█▄▄▄▐▌   ▐▌  ▐▌▐█▄▄▄█▐▌▄▄▄   
-▐█▄▄█▐█▄▄▄▐█▄▄█▌▐▌  ▐▌▐█▄▄▄▄
+█▀▀█▐█▀▀▀▐█▀▀█▌█▀▀▀█▐█▀▀▀   ▐▌  
+█▄▄▄▐▌   ▐▌  ▐▌█▄▄▄█▐▌▄▄        
+▄▄▄█▐█▄▄▄▐█▄▄█▌█  ▐▌▐█▄▄▄   ▐▌  
 """
 
-game_over_label = """
+game_over_label = """\
  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄       ▄▄  ▄▄▄▄▄▄▄▄▄▄▄       ▄▄▄▄▄▄▄▄▄▄▄  ▄               ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄ 
 ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░▌     ▐░░▌▐░░░░░░░░░░░▌     ▐░░░░░░░░░░░▌▐░▌             ▐░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌
 ▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌▐░▌░▌   ▐░▐░▌▐░█▀▀▀▀▀▀▀▀▀      ▐░█▀▀▀▀▀▀▀█░▌ ▐░▌           ▐░▌ ▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀█░▌
@@ -147,9 +152,70 @@ counter_0 = """\
 ▐█▄▄▄▄▄▄▄█▌▐█▄▄▄▄▄▄▄█▌
  ▀▀▀▀▀▀▀▀▀  ▀▀▀▀▀▀▀▀▀ 
 """
+score_9 = """\
+█▀▀█
+█▄▄█
+▄▄▄█
+"""
+score_8 = """\
+█▀▀█
+█▄▄█
+█▄▄█
+"""
+score_7 = """\
+█▀▀█
+   █
+   █
+"""
+score_6 = """\
+█▀▀▀
+█▄▄▄
+█▄▄█
+"""
+score_5 = """\
+█▀▀▀
+█▄▄▄
+▄▄▄█
+"""
+score_4 = """\
+█   
+█  █
+▀▀▀█ 
+"""
+score_3 = """\
+▀▀▀█
+▄▄▄█
+▄▄▄█ 
+"""
+score_2 = """\
+▀▀▀█
+█▀▀▀
+█▄▄▄ 
+"""
+score_1 = """\
+▄▐▌  
+▀▐▌  
+▄██▄ 
+"""
+score_0 = """\
+█▀▀█ 
+█  █ 
+█▄▄█ 
+"""
+
+thon_player_label = """\
+▀▀██▀▀ █   █ █▀▀▀█ █▌ █
+  ▐▌   █▄▄▄█ █   █ █ ▌█
+  ▐▌   █   █ █▄▄▄█ █ ▐█
+"""
+birdy_player_label = """\
+█▀▀█  █ █▀▀▀▄ █▀▀▄ █  █
+█▄▄██ █ █▀▀█▀ █  █ █▄▄█
+█▄▄▄█ █ █   █ █▄▄▀  ▐▌
+"""
 
 ### Players
-birdython_player = """
+birdy_player = """\
                                    
             ⬛️⬛️⬛️⬛️⬛️⬛️          
         ⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬛️        
@@ -166,17 +232,21 @@ birdython_player = """
                                    
 """
 
-thon_player = """
-                                 
-⬛️            ⬛️⬛️⬛️⬛️⬛️         
-⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦🟦⬛️⬛️     
-⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️   
-⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️  
-⬛️🟦⬜️⬛️🟦🟦🟦🟦⬜️⬜️⬜️⬛️🟦🟦🟦⬛️⬛️  
-⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️   
-⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦🟦⬛️⬛️     
-⬛️            ⬛️⬛️⬛️⬛️⬛️         
+thon_player = """\
                                   
+                          ⬛️⬛️    
+                        ⬛️🟧🟧⬛️  
+                       ⬛️🟧🟧🟧⬛️ 
+                      ⬛️⬛️⬛️⬛️⬛️⬛️
+⬛️            ⬛️⬛️⬛️⬛️⬛️          
+⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦🟦⬛️⬛️      
+⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️    
+⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️  
+⬛️🟦⬜️⬛️🟦🟦🟦🟦⬜️⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
+⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️    
+⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦🟦⬛️⬛️       
+⬛️            ⬛️⬛️⬛️⬛️⬛️           
+                                    
 """
 
 ### Tunnels
@@ -205,7 +275,7 @@ tunnel_down_shadow = """\
                          
 """
 
-arrows = """
+arrows = """\
       ⬛⬛
     ⬛🟦⬛
   ⬛🟦🟦⬛⬛⬛⬛⬛
@@ -226,13 +296,14 @@ cursor = """\
    ⬛🟦⬛🟨⬛   
  ⬛🟦🟦⬛🟨🟨⬛ 
  ⬛⬛⬛⬛⬛⬛⬛ 
+                
 """
 
 cursor_shadow = """\
-              
-              
-              
-              
+                 
+                 
+                 
+                 
 """
 
 # UART init
@@ -251,7 +322,6 @@ def counter_timer(t_counter):
     global counter_var
     counter_var += 1
     toggle = not toggle
-    #print(f"Toggle : {toggle}\ncounter_var : {counter_var}")
 
 toggle = False
 counter_var = 0
@@ -291,20 +361,20 @@ def splash_screen_loading():
     while (counter_var < 10):
       delay(500)
       if (counter_var % 2 == 0):
-        draw_element(loading_bar_content, screen_placement(WINDOW_LENGTH, 50, 0)+i, 45)
+        draw_element(loading_bar_content, screen_placement(WINDOW_LENGTH, 50, 0)+i, 44)
       i += 5
 
     clear_screen()
 
 def draw_nothing(col):
-    for i in range (0, WINDOW_HEIGHT):
+    for i in range (0, WINDOW_HEIGHT_RUNNING_STATE):
         move(col, i)
         uart.write(" \b")
 
 def draw_tunnels_down(x,y):
     draw_element(tunnel_down, x, y)
     y += 4
-    while(y <= WINDOW_HEIGHT):
+    while(y < WINDOW_HEIGHT_RUNNING_STATE):
         draw_element(tunnel_base, x, y)
         y += 1
     
@@ -314,10 +384,11 @@ def draw_tunnels_up(x,y):
         y -= 1
         draw_element(tunnel_base, x, y)
 
-def game_over():
+def game_over(last_score):
     clear_screen()
     draw_element(game_over_label, screen_placement(WINDOW_LENGTH, 115, 0), 20)
     draw_element(try_again_label, screen_placement(WINDOW_LENGTH, 62, 0), 35)
+    add_last_score(last_score)
     delay(3000)
     clear_screen()
 
@@ -336,8 +407,8 @@ def user_name():
 
 def draw_last_score(x, y):
     data = []
-    with open('last_scores.txt', 'r') as file_records:
-        data = file_records.readlines()
+    with open('last_scores.txt', 'r') as file_last_scores:
+        data = file_last_scores.readlines()
         
     if data:
         last_score =  data[-1]
@@ -347,16 +418,16 @@ def draw_last_score(x, y):
     move(x, y)
     uart.write(LAST_SCORE + last_score)
 
-def add_current_score(name, score):
-    with open('best_scores.txt', 'w') as file_records:
-        data = file_records.readlines()
-    pass
+def add_last_score(last_score):
+    print(str(last_score))
+    with open('last_scores.txt', 'w') as file_last_scores:
+        file_last_scores.write(str(last_score))
 
 def draw_menu():
     draw_element(game_name_label,screen_placement(WINDOW_LENGTH, 130, 0), 10)
-    draw_element(button_start, screen_placement(WINDOW_LENGTH, 43, 1), 33)
-    draw_element(button_quit,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 43, 1), 33)
-    draw_element(arrows, screen_placement(WINDOW_LENGTH, 30, 0), 30)
+    draw_element(button_start, screen_placement(WINDOW_LENGTH, 44, 1), 33)
+    draw_element(button_quit,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 44, 1), 33)
+    draw_element(arrows, screen_placement(WINDOW_LENGTH, 32, 0), 30)
     draw_element(HELP, screen_placement(WINDOW_LENGTH, 50, 0),55)
     draw_last_score(200,58)
 
@@ -370,35 +441,36 @@ def choose_your_player():
     clear_screen()
     choose_player_flag = False
 
-    draw_element(birdython_player, screen_placement(WINDOW_LENGTH, 22, 1), (WINDOW_HEIGHT//2) - 7)
-    draw_element(thon_player, (WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 18, 1),  (WINDOW_HEIGHT//2) - 4)
+    draw_element(birdy_player, screen_placement(WINDOW_LENGTH, 36, 1), (WINDOW_HEIGHT//2) - 7)
+    draw_element(thon_player, (WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 36, 1),  (WINDOW_HEIGHT//2) - 7)
     draw_element(choose_player_label, screen_placement(WINDOW_LENGTH, 115, 0),5)
     draw_element(HELP_CHOOSE_PLAYER, screen_placement(WINDOW_LENGTH, 53, 0), 15)
 
     counter_temp = counter_var
     while (counter_var < counter_temp + 4):
       print("counter :", counter_var)
-      blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,14,0), WINDOW_HEIGHT//2+15)
+      blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,17,0), WINDOW_HEIGHT//2+15)
 
     while(not choose_player_flag):
       
-      blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,14,0), WINDOW_HEIGHT//2+15)
+      blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,17,0), WINDOW_HEIGHT//2+15)
       choose_player_acc_data = lis3dsh_driver.get_acc_value()
+      print("acc :", choose_player_acc_data)
       
       if choose_player_acc_data < -300:
-          player_choose = birdython_player
+          player_choose = birdy_player
           choose_player_flag = True
       elif choose_player_acc_data > 300:
           player_choose = thon_player
           choose_player_flag = True
     
-    draw_element(cursor_shadow, screen_placement(WINDOW_LENGTH,10,0), WINDOW_HEIGHT//2+15)
+    draw_element(cursor_shadow, screen_placement(WINDOW_LENGTH,17,0), WINDOW_HEIGHT//2+15)
     draw_element(HELP_CHOOSE_PLAYER_SHADOW,screen_placement(WINDOW_LENGTH, 53, 0), 15)
 
     draw_element(GAME_START, screen_placement(WINDOW_LENGTH, 23, 0), 22)
     counter_temp = counter_var
     while (counter_var < counter_temp + 8):
-      if player_choose == birdython_player:
+      if player_choose == birdy_player:
         draw_element(PLAYER_CHOOSE + "BIRDYTHON PLAYER !", screen_placement(WINDOW_LENGTH, 33, 0), 45)
         blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH, 10, 1), (WINDOW_HEIGHT//2) +15)
       else:
@@ -414,6 +486,40 @@ def choose_your_player():
         draw_element(counter_0, screen_placement(WINDOW_LENGTH, 22, 0), screen_placement(WINDOW_HEIGHT, 8, 0))
     clear_screen()
     return player_choose
+
+def transform_score_counter(score_counter):
+    pattern_score_counter = ["","","","",""]
+    digits_score_counter = [int(a) for a in str(score_counter)]
+    placement = 0
+    for digit in digits_score_counter:
+      if digit == 0:
+        pattern_score_counter[placement] = score_0
+      if digit == 1:
+        pattern_score_counter[placement] = score_1
+      if digit == 2:
+        pattern_score_counter[placement] = score_2
+      if digit == 3:
+        pattern_score_counter[placement] = score_3
+      if digit == 4:
+        pattern_score_counter[placement] = score_4
+      if digit == 5:
+        pattern_score_counter[placement] = score_5
+      if digit == 6:
+        pattern_score_counter[placement] = score_6
+      if digit == 7:
+        pattern_score_counter[placement] = score_7
+      if digit == 8:
+        pattern_score_counter[placement] = score_8
+      if digit == 9:
+        pattern_score_counter[placement] = score_9
+      placement +=1
+
+    return pattern_score_counter
+
+def draw_element_bar(player_name):
+    draw_element(line_label, 0, WINDOW_HEIGHT - 4)
+    draw_element(score_label, screen_placement(WINDOW_LENGTH, 32, 1) + (WINDOW_LENGTH//2) + 15,WINDOW_HEIGHT - 2)
+    draw_element(player_name, 3,WINDOW_HEIGHT-2)
 
 def random_data_for_tunnels():
     #random_data = random.randrange(0,67)
