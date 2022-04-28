@@ -1,9 +1,8 @@
-import pyb 
-import lis3dsh_driver
 import random
 
+from lis3dsh_driver import get_acc_value
 from pyb import UART, Pin, Timer, delay
-from constants import GAME_START, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, PLAYER_CHOOSE, WINDOW_HEIGHT, WINDOW_HEIGHT_RUNNING_STATE, WINDOW_LENGTH, SCORE, LAST_SCORE, HELP
+from constants import GAME_START, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, PLAYER_CHOOSE, WINDOW_HEIGHT, WINDOW_HEIGHT_RUNNING_STATE, WINDOW_LENGTH, LAST_SCORE, HELP
 
 ### Texts
 button_start = """\
@@ -72,7 +71,7 @@ line_label = """\
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\
 ▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄\
-▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
+▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄▄
 """
 
 choose_player_label = """\
@@ -106,7 +105,7 @@ game_over_label = """\
 ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌               ▐░▌       ▐░▌      ▐░▌ ▐░▌      ▐░▌          ▐░▌     ▐░▌  
 ▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄▄▄      ▐░█▄▄▄▄▄▄▄█░▌       ▐░▐░▌       ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌      ▐░▌ 
 ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌     ▐░░░░░░░░░░░▌        ▐░▌        ▐░░░░░░░░░░░▌▐░▌       ▐░▌
- ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀       ▀▀▀▀▀▀▀▀▀▀▀          ▀          ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀                                                                                                                 
+ ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀       ▀▀▀▀▀▀▀▀▀▀▀          ▀          ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀ 
 """
 
 counter_3 = """\
@@ -216,26 +215,41 @@ birdy_player_label = """\
 
 ### Players
 birdy_player = """\
-                                   
-            ⬛️⬛️⬛️⬛️⬛️⬛️          
-        ⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬛️        
-      ⬛️🟨🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️      
-  ⬛️⬛️⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️    
-⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️    
-⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬜️⬛️    
+                          
+⬛️⬛️⬛️       ⬛️⬛️⬛️⬛️⬛️⬛️  
+⬛️🟧⬛️   ⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬛️  
+⬛️⬛️  ⬛️🟨🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️  
+  ⬛️⬛️⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
+⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
+⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬜️⬛️  
 ⬛️🟨⬜️⬜️⬜️🟨⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️⬛️  
   ⬛️🟨🟨🟨⬛️🟨🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
     ⬛️⬛️⬛️🟨🟨🟨🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️  
-        ⬛️🟨🟨🟨🟨🟨⬛️🟧🟧🟧🟧⬛️  
-          ⬛️⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️    
-              ⬛️⬛️⬛️⬛️             
-                                   
+        ⬛️🟨🟨🟨🟨🟨⬛️🟧🟧🟧🟧⬛️
+          ⬛️⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️  
+              ⬛️⬛️⬛️⬛️         
+                      
+"""
+
+birdy_player_game_over = """\
+⬛️⬛️⬛️       ⬛️⬛️⬛️⬛️⬛️⬛️
+⬛️🟧⬛️   ⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬛️
+⬛️⬛️  ⬛️🟨🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️
+  ⬛️⬛️⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
+⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
+⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬜️⬛️
+⬛️🟨⬜️⬜️⬜️🟨⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️⬛️
+  ⬛️🟨🟨🟨⬛️🟨🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
+    ⬛️⬛️⬛️🟨🟨🟨🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️
+        ⬛️🟨🟨🟨🟨🟨⬛️🟧🟧🟧🟧⬛️
+          ⬛️⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️
+              ⬛️⬛️⬛️⬛️
 """
 
 thon_player = """\
-                                  
-                          ⬛️⬛️    
-                        ⬛️🟧🟧⬛️  
+                              
+                          ⬛️⬛️ 
+                        ⬛️🟧🟧⬛️ 
                        ⬛️🟧🟧🟧⬛️ 
                       ⬛️⬛️⬛️⬛️⬛️⬛️
 ⬛️            ⬛️⬛️⬛️⬛️⬛️          
@@ -244,9 +258,40 @@ thon_player = """\
 ⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️  
 ⬛️🟦⬜️⬛️🟦🟦🟦🟦⬜️⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
 ⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️    
-⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦🟦⬛️⬛️       
-⬛️            ⬛️⬛️⬛️⬛️⬛️           
-                                    
+⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦🟦⬛️⬛️  
+⬛️            ⬛️⬛️⬛️⬛️⬛️    
+                          
+"""
+
+thon_player_game_over = """\
+                          ⬛️⬛️
+                        ⬛️🟧🟧⬛️
+                       ⬛️🟧🟧🟧⬛️
+                      ⬛️⬛️⬛️⬛️⬛️⬛️
+⬛️            ⬛️⬛️⬛️⬛️⬛️
+⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦🟦⬛️⬛️
+⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️
+⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️
+⬛️🟦⬜️⬛️🟦🟦🟦🟦⬜️⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
+⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️
+⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦🟦⬛️⬛️
+⬛️            ⬛️⬛️⬛️⬛️⬛️
+"""
+
+player_shadow = """\
+                                   
+                                   
+                                   
+                                   
+                                   
+                                   
+                                   
+                                   
+                                   
+                                   
+                                   
+                                   
+                                   
 """
 
 ### Tunnels
@@ -266,13 +311,6 @@ tunnel_up = """\
 
 tunnel_base = """\
    ⬛️🟩🟩🟩🟩🟩🟩🟩⬛   
-"""
-
-tunnel_down_shadow = """\
-                         
-                         
-                         
-                         
 """
 
 arrows = """\
@@ -296,7 +334,6 @@ cursor = """\
    ⬛🟦⬛🟨⬛   
  ⬛🟦🟦⬛🟨🟨⬛ 
  ⬛⬛⬛⬛⬛⬛⬛ 
-                
 """
 
 cursor_shadow = """\
@@ -318,12 +355,12 @@ push_button = Pin("PA0", Pin.IN, Pin.PULL_DOWN)
 t_counter = Timer(4, freq=2)
 
 def counter_timer(t_counter):
-    global toggle
+    global toggle_var
     global counter_var
     counter_var += 1
-    toggle = not toggle
+    toggle_var = not toggle_var
 
-toggle = False
+toggle_var = False
 counter_var = 0
 
 t_counter.callback(counter_timer)
@@ -384,7 +421,14 @@ def draw_tunnels_up(x,y):
         y -= 1
         draw_element(tunnel_base, x, y)
 
-def game_over(last_score):
+def game_over(player_caracter ,last_score, x, y):
+    counter_temp = counter_var
+    if player_caracter == birdy_player:
+      game_over_player = birdy_player_game_over
+    else:
+      game_over_player = thon_player_game_over
+    while (counter_var < counter_temp + 6):
+      blink_element(game_over_player, player_shadow, x, y)
     clear_screen()
     draw_element(game_over_label, screen_placement(WINDOW_LENGTH, 115, 0), 20)
     draw_element(try_again_label, screen_placement(WINDOW_LENGTH, 62, 0), 35)
@@ -419,7 +463,6 @@ def draw_last_score(x, y):
     uart.write(LAST_SCORE + last_score)
 
 def add_last_score(last_score):
-    print(str(last_score))
     with open('last_scores.txt', 'w') as file_last_scores:
         file_last_scores.write(str(last_score))
 
@@ -432,7 +475,7 @@ def draw_menu():
     draw_last_score(200,58)
 
 def blink_element(first_element, second_element, x,y):
-    if toggle:
+    if toggle_var:
       draw_element(first_element,x,y)
     else:
       draw_element(second_element, x,y)
@@ -448,14 +491,12 @@ def choose_your_player():
 
     counter_temp = counter_var
     while (counter_var < counter_temp + 4):
-      print("counter :", counter_var)
       blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,17,0), WINDOW_HEIGHT//2+15)
 
     while(not choose_player_flag):
       
       blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH,17,0), WINDOW_HEIGHT//2+15)
-      choose_player_acc_data = lis3dsh_driver.get_acc_value()
-      print("acc :", choose_player_acc_data)
+      choose_player_acc_data = get_acc_value()
       
       if choose_player_acc_data < -300:
           player_choose = birdy_player
@@ -471,7 +512,7 @@ def choose_your_player():
     counter_temp = counter_var
     while (counter_var < counter_temp + 8):
       if player_choose == birdy_player:
-        draw_element(PLAYER_CHOOSE + "BIRDYTHON PLAYER !", screen_placement(WINDOW_LENGTH, 33, 0), 45)
+        draw_element(PLAYER_CHOOSE + "BIRDY PLAYER !", screen_placement(WINDOW_LENGTH, 33, 0), 45)
         blink_element(cursor, cursor_shadow, screen_placement(WINDOW_LENGTH, 10, 1), (WINDOW_HEIGHT//2) +15)
       else:
         draw_element(PLAYER_CHOOSE + "THON PLAYER !", screen_placement(WINDOW_LENGTH, 28, 0), 45)

@@ -1,8 +1,5 @@
-from commun import *
-import pyb
 import lis3dsh_driver
-
-from pyb import Timer
+from commun import *
 
 end_game_state = False
 game_is_running_state = False
@@ -13,13 +10,13 @@ i = 0
 player_caracter_name = ""
 
 splash_screen_loading()
+lis3dsh_driver.init_acc()
 
 while(not end_game_state):
     draw_menu()
-    
+
     while(-300 < start_or_quit < 300):
         start_or_quit = lis3dsh_driver.get_acc_value()
-        print("start or quit : ", start_or_quit)
         if start_or_quit < -300:
             game_is_running_state = True 
             player_caracter = choose_your_player()
@@ -44,10 +41,10 @@ while(not end_game_state):
             placement += 6
 
         start_or_quit = 0
-        if (y > 5) and (y < 45):
+        if (y > 1) and (y < 40):
             print(f"y = {y}")
             if push_button.value():
-                if y == 6:
+                if y == 2:
                     pass
                 else:
                     y = y-1
@@ -56,13 +53,13 @@ while(not end_game_state):
                 y = y+1
                 draw_element(player_caracter, x, y)
         else:
-            if(y == 5):
-                y = 6
-            if(y == 45):
-                game_over(score_counter)
+            if(y == 1):
+                y = 2
+            if(y == 40):
+                game_over(player_caracter, score_counter, x, y)
                 game_is_running_state = False
                 break
-        
+
         draw_tunnels_down(x_tunnel, 47)
         draw_tunnels_up(x_tunnel, 20)
 
@@ -71,15 +68,14 @@ while(not end_game_state):
             score_counter += 1
             erase_old_tunnel = True   
             x_tunnel = 200
-        
-        if (x+35) >= x_tunnel:
-            if y <= 20:
-                game_over(score_counter)
+
+        if (x+33) >= x_tunnel:
+            if y <= 20+4:
+                game_over(player_caracter, score_counter, x, y)
                 game_is_running_state = False
             if y+13 >= 50:
-                game_over(score_counter)
+                game_over(player_caracter, score_counter, x, y)
                 game_is_running_state = False
-        
 
         if erase_old_tunnel:
             i += 1
