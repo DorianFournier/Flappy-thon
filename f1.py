@@ -1,9 +1,11 @@
+from constants import PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL
 import lis3dsh_driver
 from commun import *
 
 end_game_state = False
 game_is_running_state = False
 erase_old_tunnel = False
+tunnel_already_draw = False
 start_or_quit = 0
 player_caracter = """"""
 i = 0
@@ -28,12 +30,19 @@ while(not end_game_state):
         elif start_or_quit > 300:
             end_game_state = True
 
-    x = 30
-    y = screen_placement(WINDOW_HEIGHT, 14, 0)
-    x_tunnel = 200
+    x_player_caracter = 30
+    y_player_caracter = screen_placement(WINDOW_HEIGHT, 14, 0)
+
+    x_tunnel = START_X_TUNNEL
+    y_tunnel_up = 0
+    y_tunnel_down = 0
+
     score_counter = 0
+    difficulty_level = "easy"
+    tunnel_already_draw = False
 
     while(game_is_running_state):
+        adapt_difficulty_level(score_counter)
         pattern_score_counter = transform_score_counter(score_counter)
         placement = 0
         for pattern in pattern_score_counter:
@@ -41,42 +50,50 @@ while(not end_game_state):
             placement += 6
 
         start_or_quit = 0
-        if (y > 1) and (y < 40):
-            print(f"y = {y}")
+        if (y_player_caracter > 0) and (y_player_caracter < 40):
+            print(f"y_player_caracter = {y_player_caracter}")
             if push_button.value():
-                if y == 2:
+                if y_player_caracter == 1:
                     pass
                 else:
-                    y = y-1
-                draw_element(player_caracter, x, y)
+                    y_player_caracter = y_player_caracter-1
+                draw_element(player_caracter, x_player_caracter, y_player_caracter)
             else:
-                y = y+1
-                draw_element(player_caracter, x, y)
+                y_player_caracter = y_player_caracter+1
+                draw_element(player_caracter, x_player_caracter, y_player_caracter)
         else:
-            if(y == 1):
-                y = 2
-            if(y == 40):
-                draw_element(player_shadow, x, y)
-                y += 2
-                game_over(player_caracter, score_counter, x, y)
+            if(y_player_caracter == 0):
+                y_player_caracter = 1
+            if(y_player_caracter == 40):
+                draw_element(player_shadow, x_player_caracter, y_player_caracter)
+                y_player_caracter += 2
+                game_over(player_caracter, score_counter, x_player_caracter, y_player_caracter)
                 game_is_running_state = False
                 break
 
-        draw_tunnels_down(x_tunnel, 47)
-        draw_tunnels_up(x_tunnel, 20)
+        if not tunnel_already_draw:
+            tunnel_already_draw = True
+            y_tunnel_up = random_data_for_tunnel_up()
+            y_tunnel_down = data_for_tunnel_down(y_tunnel_up, difficulty_level)
+            
+        draw_tunnels_up(x_tunnel, y_tunnel_up)
+        draw_tunnels_down(x_tunnel, y_tunnel_down)
 
         x_tunnel -= 1
         if (x_tunnel == 0):
             score_counter += 1
-            erase_old_tunnel = True   
-            x_tunnel = 200
+            erase_old_tunnel = True
+            tunnel_already_draw = False
+            x_tunnel = START_X_TUNNEL
 
-        if (x+33) >= x_tunnel:
-            if y <= 20+4:
-                game_over(player_caracter, score_counter, x, y)
+        if (x_player_caracter + PLAYER_LENGTH) >= x_tunnel:
+            if y_player_caracter <= (y_tunnel_up + TUNNEL_HEIGHT):
+                draw_element(player_shadow, x_player_caracter, y_player_caracter + 1)
+                game_over(player_caracter, score_counter, x_player_caracter, y_player_caracter)
                 game_is_running_state = False
-            if y+13 >= 50:
-                game_over(player_caracter, score_counter, x, y)
+            if (y_player_caracter + PLAYER_HEIGHT) >= y_tunnel_down:
+                draw_element(player_shadow, x_player_caracter, y_player_caracter)
+                game_over(player_caracter, score_counter, x_player_caracter, y_player_caracter + 1)
                 game_is_running_state = False
 
         if erase_old_tunnel:

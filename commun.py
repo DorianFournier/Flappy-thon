@@ -2,7 +2,7 @@ import random
 
 from lis3dsh_driver import get_acc_value
 from pyb import UART, Pin, Timer, delay
-from constants import GAME_START, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, PLAYER_CHOOSE, WINDOW_HEIGHT, WINDOW_HEIGHT_RUNNING_STATE, WINDOW_LENGTH, LAST_SCORE, HELP
+from constants import EASY_SPACE, GAME_START, HARD_SPACE, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, IMPOSSIBLE_SPACE, MEDIUM_SPACE, PLAYER_CHOOSE, TUNNEL_DOWN_MINIMUM_Y, TUNNEL_HEIGHT, WINDOW_HEIGHT, WINDOW_HEIGHT_RUNNING_STATE, WINDOW_LENGTH, LAST_SCORE, HELP
 
 ### Texts
 button_start = """\
@@ -248,10 +248,10 @@ birdy_player_game_over = """\
 
 thon_player = """\
                               
-                          ⬛️⬛️ 
-                        ⬛️🟧🟧⬛️ 
-                       ⬛️🟧🟧🟧⬛️ 
-                      ⬛️⬛️⬛️⬛️⬛️⬛️
+    ⬛️⬛️⬛️                ⬛️⬛️ 
+      ⬛️                ⬛️🟧🟧⬛️ 
+  ⬛️  ⬛️  ⬛️           ⬛️🟧🟧🟧⬛️ 
+    ⬛️  ⬛️            ⬛️⬛️⬛️⬛️⬛️⬛️
 ⬛️            ⬛️⬛️⬛️⬛️⬛️          
 ⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦🟦⬛️⬛️      
 ⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️    
@@ -264,10 +264,10 @@ thon_player = """\
 """
 
 thon_player_game_over = """\
-                          ⬛️⬛️
-                        ⬛️🟧🟧⬛️
-                       ⬛️🟧🟧🟧⬛️
-                      ⬛️⬛️⬛️⬛️⬛️⬛️
+    ⬛️⬛️⬛️                  ⬛️⬛️
+      ⬛️                  ⬛️🟧🟧⬛️
+  ⬛️  ⬛️  ⬛️             ⬛️🟧🟧🟧⬛️
+    ⬛️  ⬛️              ⬛️⬛️⬛️⬛️⬛️⬛️
 ⬛️            ⬛️⬛️⬛️⬛️⬛️
 ⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦🟦⬛️⬛️
 ⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️
@@ -561,7 +561,36 @@ def draw_element_bar(player_name):
     draw_element(score_label, screen_placement(WINDOW_LENGTH, 32, 1) + (WINDOW_LENGTH//2) + 15,WINDOW_HEIGHT - 2)
     draw_element(player_name, 3,WINDOW_HEIGHT-2)
 
-def random_data_for_tunnels():
-    #random_data = random.randrange(0,67)
-    #print(random_data)
-    pass
+def random_data_for_tunnel_up():
+    random_data_tunnel_up = random.randrange(3,21)
+    print("random_data_tunnel_up : ",random_data_tunnel_up)
+
+    return random_data_tunnel_up
+
+def data_for_tunnel_down(y_tunnel_up, difficulty_level):
+    y_tunnel_down = 0
+
+    if difficulty_level == "easy":
+      y_tunnel_down = y_tunnel_up + TUNNEL_HEIGHT + EASY_SPACE
+    if difficulty_level == "medium":
+      y_tunnel_down = y_tunnel_up + TUNNEL_HEIGHT + MEDIUM_SPACE
+    if difficulty_level == "hard":
+      y_tunnel_down = y_tunnel_up + TUNNEL_HEIGHT + HARD_SPACE
+    if difficulty_level == "impossible":
+      y_tunnel_down = y_tunnel_up + TUNNEL_HEIGHT + IMPOSSIBLE_SPACE
+  
+    print("y_tunnel_down : ", y_tunnel_down)
+
+    return y_tunnel_down
+
+def adapt_difficulty_level(score_counter):
+    if score_counter < 4 :
+      difficulty_level = "easy"
+    elif 4 < score_counter < 8:
+      difficulty_level = "medium"
+    elif 8 < score_counter < 12:
+      difficulty_level = "hard"
+    else:
+      difficulty_level = "impossible"
+
+    return difficulty_level
