@@ -215,101 +215,101 @@ birdy_player_label = """\
 
 ### Players
 birdy_player = """\
-                          
-⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️⬛️  
-⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬛️  
-⬛️⬛️  ⬛️🟨🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️  
-  ⬛️⬛️⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
-⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
-⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬜️⬛️  
-⬛️🟨⬜️⬜️⬜️🟨⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️⬛️  
-  ⬛️🟨🟨🟨⬛️🟨🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
-    ⬛️⬛️⬛️🟨🟨🟨🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️  
-        ⬛️🟨🟨🟨🟨🟨⬛️🟧🟧🟧🟧⬛️
-          ⬛️⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️  
-              ⬛️⬛️⬛️⬛️         
-                      
+                       
+⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️  
+⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨⬛️⬜️⬛️  
+⬛️⬛️  ⬛️🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️  
+  ⬛️⬛️⬛️⬛️🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
+⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
+⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬜️⬛️  
+⬛️🟨⬜️⬜️⬜️🟨⬛️🟨🟨🟨⬛️⬛️⬛️⬛️⬛️  
+  ⬛️🟨🟨🟨⬛️🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
+    ⬛️⬛️⬛️🟨🟨🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️  
+        ⬛️🟨🟨🟨🟨⬛️🟧🟧🟧🟧⬛️
+          ⬛️⬛️🟨🟨🟨⬛️⬛️⬛️⬛️  
+              ⬛️⬛️⬛️         
+                    
 """
 
 birdy_player_game_over = """\
-⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️⬛️
-⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬛️
-⬛️⬛️  ⬛️🟨🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️
-  ⬛️⬛️⬛️⬛️🟨🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
-⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
-⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨🟨⬛️⬜️⬜️⬜️⬛️
-⬛️🟨⬜️⬜️⬜️🟨⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️⬛️
-  ⬛️🟨🟨🟨⬛️🟨🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
-    ⬛️⬛️⬛️🟨🟨🟨🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️
-        ⬛️🟨🟨🟨🟨🟨⬛️🟧🟧🟧🟧⬛️
-          ⬛️⬛️🟨🟨🟨🟨⬛️⬛️⬛️⬛️
-              ⬛️⬛️⬛️⬛️
+⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️
+⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨⬛️⬜️⬛️
+⬛️⬛️  ⬛️🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️
+  ⬛️⬛️⬛️⬛️🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
+⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
+⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬜️⬛️
+⬛️🟨⬜️⬜️⬜️🟨⬛️🟨🟨🟨⬛️⬛️⬛️⬛️⬛️
+  ⬛️🟨🟨🟨⬛️🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
+    ⬛️⬛️⬛️🟨🟨🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️
+        ⬛️🟨🟨🟨🟨⬛️🟧🟧🟧🟧⬛️
+          ⬛️⬛️🟨🟨🟨⬛️⬛️⬛️⬛️
+              ⬛️⬛️⬛️
 """
 
 thon_player = """\
-                              
-    ⬛️⬛️⬛️                ⬛️⬛️ 
-      ⬛️                ⬛️🟧🟧⬛️ 
-  ⬛️  ⬛️  ⬛️           ⬛️🟧🟧🟧⬛️ 
-    ⬛️  ⬛️            ⬛️⬛️⬛️⬛️⬛️⬛️
-⬛️            ⬛️⬛️⬛️⬛️⬛️          
-⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦🟦⬛️⬛️      
-⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️    
-⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️  
-⬛️🟦⬜️⬛️🟦🟦🟦🟦⬜️⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
-⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️    
-⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦🟦⬛️⬛️  
-⬛️            ⬛️⬛️⬛️⬛️⬛️    
-                          
+                            
+   ⬛️⬛️⬛️            ⬛️⬛️ 
+     ⬛️            ⬛️🟧🟧⬛️ 
+ ⬛️  ⬛️  ⬛️       ⬛️🟧🟧🟧⬛️ 
+   ⬛️  ⬛️        ⬛️⬛️⬛️⬛️⬛️⬛️
+⬛️            ⬛️⬛️⬛️⬛️          
+⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦⬛️⬛️      
+⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️    
+⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️  
+⬛️🟦⬜️⬛️🟦⬜️🟦🟦⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
+⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️    
+⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦⬛️⬛️  
+⬛️            ⬛️⬛️⬛️⬛️    
+                      
 """
 
 thon_player_game_over = """\
-    ⬛️⬛️⬛️                  ⬛️⬛️
-      ⬛️                  ⬛️🟧🟧⬛️
-  ⬛️  ⬛️  ⬛️             ⬛️🟧🟧🟧⬛️
-    ⬛️  ⬛️              ⬛️⬛️⬛️⬛️⬛️⬛️
-⬛️            ⬛️⬛️⬛️⬛️⬛️
-⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦🟦⬛️⬛️
-⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️
-⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️
-⬛️🟦⬜️⬛️🟦🟦🟦🟦⬜️⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
-⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️
-⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦🟦⬛️⬛️
-⬛️            ⬛️⬛️⬛️⬛️⬛️
+   ⬛️⬛️⬛️            ⬛️⬛️
+     ⬛️            ⬛️🟧🟧⬛️
+ ⬛️  ⬛️  ⬛️       ⬛️🟧🟧🟧⬛️
+   ⬛️  ⬛️        ⬛️⬛️⬛️⬛️⬛️⬛️
+⬛️            ⬛️⬛️⬛️⬛️
+⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦⬛️⬛️
+⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️
+⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️
+⬛️🟦⬜️⬛️🟦⬜️🟦🟦⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
+⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️
+⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦⬛️⬛️
+⬛️            ⬛️⬛️⬛️⬛️
 """
 
 player_shadow = """\
-                                   
-                                   
-                                   
-                                   
-                                   
-                                   
-                                   
-                                   
-                                   
-                                   
-                                   
-                                   
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
+                                  
 """
 
 ### Tunnels
 tunnel_down = """\
- ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️ 
- ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
- ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
-   ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛   
+ ⬛️⬛️⬛⬛️⬛️⬛️⬛️⬛️⬛️⬛️ 
+ ⬛️🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
+ ⬛️🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
+   ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛   
 """
 
 tunnel_up = """\
-   ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛   
- ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
- ⬛️🟩🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
- ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️ 
+   ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛   
+ ⬛️🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
+ ⬛️🟩🟩🟩🟩🟩🟩🟩🟩⬛️ 
+ ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️ 
 """
 
 tunnel_base = """\
-   ⬛️🟩🟩🟩🟩🟩🟩🟩⬛   
+   ⬛️🟩🟩🟩🟩🟩🟩⬛   
 """
 
 arrows = """\
@@ -326,6 +326,22 @@ arrows = """\
             ⬛⬛⬛⬛⬛🟨🟨⬛
                     ⬛🟨⬛
                     ⬛⬛
+"""
+
+arrows_shadow = """\
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                               
+                               
 """
 
 cursor = """\
@@ -407,18 +423,33 @@ def draw_nothing(col):
         move(col, i)
         uart.write(" \b")
 
-def draw_tunnels_down(x,y):
-    draw_element(tunnel_down, x, y)
-    y += 4
-    while(y < WINDOW_HEIGHT_RUNNING_STATE):
-        draw_element(tunnel_base, x, y)
-        y += 1
-    
-def draw_tunnels_up(x,y):
-    draw_element(tunnel_up, x, y)
+def create_pattern_tunnel_up(y):
+    tunnel_up_base = """"""
     while(y):
         y -= 1
-        draw_element(tunnel_base, x, y)
+        tunnel_up_base =  tunnel_up_base + tunnel_base
+        print(tunnel_up_base)
+
+    return tunnel_up_base
+
+def create_pattern_tunnel_down(y):
+    tunnel_down_base = """"""
+    y += 4
+    while(y < WINDOW_HEIGHT_RUNNING_STATE):
+        tunnel_down_base =  tunnel_down_base + tunnel_base
+        y += 1
+
+    return tunnel_down_base
+
+def draw_tunnels_down(tunnel_down_base, x,y):
+    draw_element(tunnel_down, x, y)
+    y += 4
+    draw_element(tunnel_down_base, x, y)
+
+def draw_tunnels_up(tunnel_up_base, x,y):
+    draw_element(tunnel_up, x, y)
+    y = 0
+    draw_element(tunnel_up_base, x,y)
 
 def game_over(player_caracter ,last_score, x, y):
     counter_temp = counter_var
@@ -469,9 +500,14 @@ def draw_menu():
     draw_element(game_name_label,screen_placement(WINDOW_LENGTH, 130, 0), 10)
     draw_element(button_start, screen_placement(WINDOW_LENGTH, 44, 1), 33)
     draw_element(button_quit,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 44, 1), 33)
-    draw_element(arrows, screen_placement(WINDOW_LENGTH, 32, 0), 30)
+    #draw_element(arrows, screen_placement(WINDOW_LENGTH, 32, 0),  (WINDOW_HEIGHT//2)+1)
     draw_element(HELP, screen_placement(WINDOW_LENGTH, 50, 0),55)
     draw_last_score(200,58)
+
+    counter_temp = counter_var
+    while (counter_var < counter_temp + 4):
+      blink_element(arrows, arrows_shadow, screen_placement(WINDOW_LENGTH,32,0), (WINDOW_HEIGHT//2)+1)
+
 
 def blink_element(first_element, second_element, x,y):
     if toggle_var:

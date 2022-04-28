@@ -1,4 +1,4 @@
-from constants import PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL
+from constants import PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL, X_PLAYER_CARACTER
 import lis3dsh_driver
 from commun import *
 
@@ -19,6 +19,7 @@ while(not end_game_state):
 
     while(-300 < start_or_quit < 300):
         start_or_quit = lis3dsh_driver.get_acc_value()
+        blink_element(arrows, arrows_shadow, screen_placement(WINDOW_LENGTH,32,0), (WINDOW_HEIGHT//2)+1)
         if start_or_quit < -300:
             game_is_running_state = True 
             player_caracter = choose_your_player()
@@ -30,7 +31,6 @@ while(not end_game_state):
         elif start_or_quit > 300:
             end_game_state = True
 
-    x_player_caracter = 30
     y_player_caracter = screen_placement(WINDOW_HEIGHT, 14, 0)
 
     x_tunnel = START_X_TUNNEL
@@ -40,6 +40,8 @@ while(not end_game_state):
     score_counter = 0
     difficulty_level = "easy"
     tunnel_already_draw = False
+    tunnel_up_base = ""
+    tunnel_down_base = ""
 
     while(game_is_running_state):
         adapt_difficulty_level(score_counter)
@@ -51,23 +53,23 @@ while(not end_game_state):
 
         start_or_quit = 0
         if (y_player_caracter > 0) and (y_player_caracter < 40):
-            print(f"y_player_caracter = {y_player_caracter}")
+            #print(f"y_player_caracter = {y_player_caracter}")
             if push_button.value():
                 if y_player_caracter == 1:
                     pass
                 else:
                     y_player_caracter = y_player_caracter-1
-                draw_element(player_caracter, x_player_caracter, y_player_caracter)
+                draw_element(player_caracter, X_PLAYER_CARACTER, y_player_caracter)
             else:
                 y_player_caracter = y_player_caracter+1
-                draw_element(player_caracter, x_player_caracter, y_player_caracter)
+                draw_element(player_caracter, X_PLAYER_CARACTER, y_player_caracter)
         else:
             if(y_player_caracter == 0):
                 y_player_caracter = 1
             if(y_player_caracter == 40):
-                draw_element(player_shadow, x_player_caracter, y_player_caracter)
+                draw_element(player_shadow, X_PLAYER_CARACTER, y_player_caracter)
                 y_player_caracter += 2
-                game_over(player_caracter, score_counter, x_player_caracter, y_player_caracter)
+                game_over(player_caracter, score_counter, X_PLAYER_CARACTER, y_player_caracter)
                 game_is_running_state = False
                 break
 
@@ -75,9 +77,11 @@ while(not end_game_state):
             tunnel_already_draw = True
             y_tunnel_up = random_data_for_tunnel_up()
             y_tunnel_down = data_for_tunnel_down(y_tunnel_up, difficulty_level)
-            
-        draw_tunnels_up(x_tunnel, y_tunnel_up)
-        draw_tunnels_down(x_tunnel, y_tunnel_down)
+            tunnel_up_base = create_pattern_tunnel_up(y_tunnel_up)
+            tunnel_down_base = create_pattern_tunnel_down(y_tunnel_down)
+
+        draw_tunnels_up(tunnel_up_base, x_tunnel, y_tunnel_up)
+        draw_tunnels_down(tunnel_down_base, x_tunnel, y_tunnel_down)
 
         x_tunnel -= 1
         if (x_tunnel == 0):
@@ -86,14 +90,14 @@ while(not end_game_state):
             tunnel_already_draw = False
             x_tunnel = START_X_TUNNEL
 
-        if (x_player_caracter + PLAYER_LENGTH) >= x_tunnel:
+        if (X_PLAYER_CARACTER + PLAYER_LENGTH) >= x_tunnel:
             if y_player_caracter <= (y_tunnel_up + TUNNEL_HEIGHT):
-                draw_element(player_shadow, x_player_caracter, y_player_caracter + 1)
-                game_over(player_caracter, score_counter, x_player_caracter, y_player_caracter)
+                draw_element(player_shadow, X_PLAYER_CARACTER, y_player_caracter + 1)
+                game_over(player_caracter, score_counter, X_PLAYER_CARACTER, y_player_caracter)
                 game_is_running_state = False
             if (y_player_caracter + PLAYER_HEIGHT) >= y_tunnel_down:
-                draw_element(player_shadow, x_player_caracter, y_player_caracter)
-                game_over(player_caracter, score_counter, x_player_caracter, y_player_caracter + 1)
+                draw_element(player_shadow, X_PLAYER_CARACTER, y_player_caracter)
+                game_over(player_caracter, score_counter, X_PLAYER_CARACTER, y_player_caracter + 1)
                 game_is_running_state = False
 
         if erase_old_tunnel:
