@@ -56,6 +56,8 @@ while(not end_game_state):
             if(y == 1):
                 y = 2
             if(y == 40):
+                draw_element(player_shadow, x, y)
+                y += 2
                 game_over(player_caracter, score_counter, x, y)
                 game_is_running_state = False
                 break
