@@ -1,6 +1,16 @@
-from constants import ACC_DATA_MAXIMUM_TO_START, ACC_DATA_MINIMUM_TO_QUIT, PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL, X_PLAYER_CARACTER
 import lis3dsh_driver
-from commun import *
+
+from constants import ACC_DATA_MAXIMUM_TO_START, ACC_DATA_MINIMUM_TO_QUIT,\
+    PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL, X_PLAYER_CARACTER,\
+    WINDOW_HEIGHT, WINDOW_LENGTH, TUNNEL_HEIGHT
+from commun import splash_screen_loading, splash_screen_ending, draw_menu,\
+    blink_element, screen_placement, choose_your_player, draw_element,\
+    draw_element_bar, adapt_difficulty_level, transform_score_counter,\
+    push_button, game_over, random_data_for_tunnel_up, data_for_tunnel_down,\
+    create_pattern_tunnel_down, create_pattern_tunnel_up, draw_tunnels_down,\
+    draw_tunnels_up, draw_nothing
+from graphic_elements import arrows, arrows_shadow, birdy_player_label,\
+    thon_player_label, player_shadow, birdy_player
 
 end_game_state = False
 game_is_running_state = False
@@ -23,10 +33,11 @@ while(not end_game_state):
 
     while(ACC_DATA_MAXIMUM_TO_START < start_or_quit_menu < ACC_DATA_MINIMUM_TO_QUIT):
         start_or_quit_menu = lis3dsh_driver.get_acc_value()
-        blink_element(arrows, arrows_shadow, screen_placement(WINDOW_LENGTH,32,0), (WINDOW_HEIGHT//2)+1)
+        blink_element(arrows, arrows_shadow, screen_placement(
+            WINDOW_LENGTH, 32, 0), (WINDOW_HEIGHT//2) + 1)
 
         if start_or_quit_menu < ACC_DATA_MAXIMUM_TO_START:
-            game_is_running_state = True 
+            game_is_running_state = True
             player_caracter = choose_your_player()
             if player_caracter == birdy_player:
                 player_caracter_name = birdy_player_label
@@ -53,29 +64,33 @@ while(not end_game_state):
         pattern_score_counter = transform_score_counter(score_counter)
         placement = 0
         for pattern in pattern_score_counter:
-            draw_element(pattern, screen_placement(WINDOW_LENGTH, 32, 1) + (WINDOW_LENGTH//2) + 48 + placement, WINDOW_HEIGHT - 2)
+            draw_element(pattern, screen_placement(
+                WINDOW_LENGTH, 32, 1) + (WINDOW_LENGTH//2) + 48 + placement, WINDOW_HEIGHT - 2)
             placement += 6
 
         start_or_quit_menu = 0
         if (y_player_caracter > 0) and (y_player_caracter < 40):
             #print(f"y_player_caracter = {y_player_caracter}")
             if push_button.value():
-            #if attente_bouton_stable(push_button, 1):
                 if y_player_caracter == 1:
                     pass
                 else:
-                    y_player_caracter = y_player_caracter-1
-                draw_element(player_caracter, X_PLAYER_CARACTER, y_player_caracter)
+                    y_player_caracter = y_player_caracter - 1
+                draw_element(player_caracter, X_PLAYER_CARACTER,
+                             y_player_caracter)
             else:
-                y_player_caracter = y_player_caracter+1
-                draw_element(player_caracter, X_PLAYER_CARACTER, y_player_caracter)
+                y_player_caracter = y_player_caracter + 1
+                draw_element(player_caracter, X_PLAYER_CARACTER,
+                             y_player_caracter)
         else:
             if(y_player_caracter == 0):
                 y_player_caracter = 1
             if(y_player_caracter == 40):
-                draw_element(player_shadow, X_PLAYER_CARACTER, y_player_caracter)
+                draw_element(player_shadow, X_PLAYER_CARACTER,
+                             y_player_caracter)
                 y_player_caracter += 2
-                game_over(player_caracter, score_counter, X_PLAYER_CARACTER, y_player_caracter)
+                game_over(player_caracter, score_counter,
+                          X_PLAYER_CARACTER, y_player_caracter)
                 game_is_running_state = False
                 break
 
@@ -97,15 +112,19 @@ while(not end_game_state):
             x_tunnel = START_X_TUNNEL
 
         if (X_PLAYER_CARACTER + PLAYER_LENGTH) >= x_tunnel:
-            # collision with lower tunnel
-            if y_player_caracter <= (y_tunnel_up + TUNNEL_HEIGHT):
-                draw_element(player_shadow, X_PLAYER_CARACTER, y_player_caracter + 1)
-                game_over(player_caracter, score_counter, X_PLAYER_CARACTER, y_player_caracter)
-                game_is_running_state = False
             # collision with upper tunnel
+            if y_player_caracter <= (y_tunnel_up + TUNNEL_HEIGHT):
+                draw_element(player_shadow, X_PLAYER_CARACTER,
+                             y_player_caracter + 1)
+                game_over(player_caracter, score_counter,
+                          X_PLAYER_CARACTER, y_player_caracter)
+                game_is_running_state = False
+            # collision with lower tunnel
             if (y_player_caracter + PLAYER_HEIGHT) >= y_tunnel_down:
-                draw_element(player_shadow, X_PLAYER_CARACTER, y_player_caracter)
-                game_over(player_caracter, score_counter, X_PLAYER_CARACTER, y_player_caracter + 1)
+                draw_element(player_shadow, X_PLAYER_CARACTER,
+                             y_player_caracter)
+                game_over(player_caracter, score_counter,
+                          X_PLAYER_CARACTER, y_player_caracter + 1)
                 game_is_running_state = False
 
         if erase_old_tunnel:
@@ -113,6 +132,6 @@ while(not end_game_state):
             draw_nothing(i)
             if i == 24:
                 erase_old_tunnel = False
-                i=0
-    
+                i = 0
+
 splash_screen_ending()
