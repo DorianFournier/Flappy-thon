@@ -2,7 +2,7 @@ import random
 
 from lis3dsh_driver import get_acc_value
 from pyb import UART, Pin, Timer, delay
-from constants import EASY_SPACE, GAME_START, HARD_SPACE, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, IMPOSSIBLE_SPACE, MEDIUM_SPACE, PLAYER_CHOOSE, TUNNEL_DOWN_MINIMUM_Y, TUNNEL_HEIGHT, WINDOW_HEIGHT, WINDOW_HEIGHT_RUNNING_STATE, WINDOW_LENGTH, LAST_SCORE, HELP
+from constants import EASY_SPACE, GAME_NAME_LENGTH, GAME_START, HARD_SPACE, HELP_CHOOSE_PLAYER, HELP_CHOOSE_PLAYER_SHADOW, IMPOSSIBLE_SPACE, LOADING_BAR_LENGTH, LOADING_LABEL_LENGTH, MEDIUM_SPACE, PLAYER_CHOOSE, TIMER_PERIODE_MS, TUNNEL_HEIGHT, WINDOW_HEIGHT, WINDOW_HEIGHT_RUNNING_STATE, WINDOW_LENGTH, LAST_SCORE, HELP
 
 ### Texts
 button_start = """\
@@ -28,24 +28,24 @@ button_quit = """\
 """
 
 game_name_label = """\
- ▄▄▄▄▄▄▄▄▄▄▄  ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄               ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄        ▄ 
-▐░░░░░░░░░░░▌▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌             ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░▌      ▐░▌
-▐░█▀▀▀▀▀▀▀▀▀ ▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌              ▀▀▀▀█░█▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌░▌     ▐░▌
-▐░▌          ▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌                  ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌▐░▌    ▐░▌
-▐░█▄▄▄▄▄▄▄▄▄ ▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌   ▄▄▄▄▄▄▄▄▄▄▄    ▐░▌     ▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌▐░▌ ▐░▌   ▐░▌
-▐░░░░░░░░░░░▌▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌  ▐░░░░░░░░░░░▌   ▐░▌     ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌  ▐░▌  ▐░▌
-▐░█▀▀▀▀▀▀▀▀▀ ▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀▀▀  ▀▀▀▀█░█▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀    ▐░▌     ▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌▐░▌   ▐░▌ ▐░▌
-▐░▌          ▐░▌          ▐░▌       ▐░▌▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌    ▐░▌▐░▌
-▐░▌          ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌       ▐░▌▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░▌     ▐░▐░▌
-▐░▌          ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░▌      ▐░░▌
- ▀            ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀                 ▀                         ▀       ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀        ▀▀ 
+ ▄▄▄▄▄▄▄▄▄▄▄  ▄            ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄               ▄▄▄▄▄▄▄▄▄▄▄  ▄         ▄  ▄▄▄▄▄▄▄▄▄▄▄  ▄▄        ▄ 
+▐░░░░░░░░░░░▌▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░▌       ▐░▌             ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░░▌      ▐░▌
+▐░█▀▀▀▀▀▀▀▀▀ ▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌              ▀▀▀▀█░█▀▀▀▀ ▐░▌       ▐░▌▐░█▀▀▀▀▀▀▀█░▌▐░▌░▌     ▐░▌
+▐░▌          ▐░▌          ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌▐░▌       ▐░▌                  ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌▐░▌    ▐░▌
+▐░█▄▄▄▄▄▄▄▄▄ ▐░▌          ▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌▐░█▄▄▄▄▄▄▄█░▌   ▄▄▄▄▄▄▄▄▄▄▄    ▐░▌     ▐░█▄▄▄▄▄▄▄█░▌▐░▌       ▐░▌▐░▌ ▐░▌   ▐░▌
+▐░░░░░░░░░░░▌▐░▌          ▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌▐░░░░░░░░░░░▌  ▐░░░░░░░░░░░▌   ▐░▌     ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌  ▐░▌  ▐░▌
+▐░█▀▀▀▀▀▀▀▀▀ ▐░▌          ▐░█▀▀▀▀▀▀▀█░▌▐░█▀▀▀▀▀▀▀▀▀ ▐░█▀▀▀▀▀▀▀▀▀  ▀▀▀▀█░█▀▀▀▀    ▀▀▀▀▀▀▀▀▀▀▀    ▐░▌     ▐░█▀▀▀▀▀▀▀█░▌▐░▌       ▐░▌▐░▌   ▐░▌ ▐░▌
+▐░▌          ▐░▌          ▐░▌       ▐░▌▐░▌          ▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░▌       ▐░▌▐░▌    ▐░▌▐░▌
+▐░▌          ▐░█▄▄▄▄▄▄▄▄▄ ▐░▌       ▐░▌▐░▌          ▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░█▄▄▄▄▄▄▄█░▌▐░▌     ▐░▐░▌
+▐░▌          ▐░░░░░░░░░░░▌▐░▌       ▐░▌▐░▌          ▐░▌               ▐░▌                       ▐░▌     ▐░▌       ▐░▌▐░░░░░░░░░░░▌▐░▌      ▐░░▌
+ ▀            ▀▀▀▀▀▀▀▀▀▀▀  ▀         ▀  ▀            ▀                 ▀                         ▀       ▀         ▀  ▀▀▀▀▀▀▀▀▀▀▀  ▀        ▀▀ 
 """
 
 try_again_label = """\
- ▀▀▀██▀▀▀▐█▀▀▀▀█ ▌    ▐    ▐█▀▀▀▀█▌▐█▀▀▀▀▀▐█▀▀▀▀█▌▐▌▐▌    ▐▌
-    ▐▌   ▐█▄▄▄▄█ █▄▄▄▄█    ▐█▄▄▄▄█▌▐▌     ▐█▄▄▄▄█▌▐▌▐▌▐▌  ▐▌
-    ▐▌   ▐▌  ▐▌    ▐▌      ▐▌    ▐▌▐▌ ▀▀▀█▐▌    ▐▌▐▌▐▌  ▐▌▐▌
-    ▐▌   ▐▌   ▐▌   ▐▌      ▐▌    ▐▌▐█▄▄▄▄█▐▌    ▐▌▐▌▐▌    ▐▌
+▀▀▀██▀▀▀▐█▀▀▀▀█ ▌    ▐    ▐█▀▀▀▀█▌▐█▀▀▀▀▀▐█▀▀▀▀█▌▐▌▐▌    ▐▌
+   ▐▌   ▐█▄▄▄▄█ █▄▄▄▄█    ▐█▄▄▄▄█▌▐▌     ▐█▄▄▄▄█▌▐▌▐▌▐▌  ▐▌
+   ▐▌   ▐▌  ▐▌    ▐▌      ▐▌    ▐▌▐▌ ▀▀▀█▐▌    ▐▌▐▌▐▌  ▐▌▐▌
+   ▐▌   ▐▌   ▐▌   ▐▌      ▐▌    ▐▌▐█▄▄▄▄█▐▌    ▐▌▐▌▐▌    ▐▌
 """
 
 loading_label = """\
@@ -79,13 +79,14 @@ choose_player_label = """\
 ▐▌    ▐▌   ▐▌▐▌   ▐▌▐▌   ▐▌▐█▄▄▄▄▐▌        █▄▄▄▄█▐▌   ▐▌▐▌   ▐▌▐█▄▄▄▄█    ▐█▄▄▄▄█▐▌    ▐█▄▄▄▄█▌█▄▄▄▄█▐▌    ▐█▄▄▄▄█
 ▐▌    ▐█▄▄▄█▌▐▌   ▐▌▐▌   ▐▌     █▐▌▀▀▀       ▐▌  ▐▌   ▐▌▐▌   ▐▌▐▌  ▐▌     ▐▌     ▐▌    ▐▌    ▐▌  ▐▌  ▐▌▀▀▀ ▐▌  ▐▌
 ▐█▄▄▄▄▐▌   ▐▌▐█▄▄▄█▌▐█▄▄▄█▌▐█▄▄▄█▐█▄▄▄▄      ▐▌  ▐█▄▄▄█▌▐█▄▄▄█▌▐▌   ▐▌    ▐▌     ▐█▄▄▄▄▐▌    ▐▌  ▐▌  ▐█▄▄▄▄▐▌   ▐▌ 
+                                                                                                                   
 """
 
 see_you_soon_label = """\
-▐█▀▀▀█▐█▀▀▀▀▐█▀▀▀▀    ▌    ▐▐█▀▀▀█▌▐▌   ▐▌    ▐█▀▀▀█▐█▀▀▀█▌▐█▀▀▀█▌▐▌    ▐▌
-▐█▄▄▄▄▐▌    ▐▌        █▄▄▄▄█▐▌   ▐▌▐▌   ▐▌    ▐█▄▄▄▄▐▌   ▐▌▐▌   ▐▌▐▌▐▌  ▐▌    
-     █▐▌▀▀▀ ▐▌▀▀▀       ▐▌  ▐▌   ▐▌▐▌   ▐▌         █▐▌   ▐▌▐▌   ▐▌▐▌  ▐▌▐▌
-▐█▄▄▄█▐█▄▄▄▄▐█▄▄▄▄      ▐▌  ▐█▄▄▄█▌▐█▄▄▄█▌    ▐█▄▄▄█▐█▄▄▄█▌▐█▄▄▄█▌▐▌    ▐▌
+▐█▀▀▀█▐█▀▀▀▀▐█▀▀▀▀    ▌    ▐▐█▀▀▀█▌▐▌   ▐▌    ▐█▀▀▀█▐█▀▀▀█▌▐█▀▀▀█▌▐▌    ▐▌ 
+▐█▄▄▄▄▐▌    ▐▌        █▄▄▄▄█▐▌   ▐▌▐▌   ▐▌    ▐█▄▄▄▄▐▌   ▐▌▐▌   ▐▌▐▌▐▌  ▐▌ 
+     █▐▌▀▀▀ ▐▌▀▀▀       ▐▌  ▐▌   ▐▌▐▌   ▐▌         █▐▌   ▐▌▐▌   ▐▌▐▌  ▐▌▐▌ 
+▐█▄▄▄█▐█▄▄▄▄▐█▄▄▄▄      ▐▌  ▐█▄▄▄█▌▐█▄▄▄█▌    ▐█▄▄▄█▐█▄▄▄█▌▐█▄▄▄█▌▐▌    ▐▌ 
 """
 
 score_label = """\
@@ -215,10 +216,42 @@ birdy_player_label = """\
 
 ### Players
 birdy_player = """\
+                         
+⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️⬛️  
+⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨⬛️⬜️⬜️⬛️  
+⬛️⬛️  ⬛️🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬜️⬛️
+    ⬛️⬛️⬛️🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
+  ⬛️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
+⬛️⬜️🟨🟨⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬜️⬛️  
+⬛️🟨⬛️⬛️⬛️🟨⬛️🟨🟨🟨⬛️⬛️⬛️⬛️⬛️  
+  ⬛️🟨🟨🟨⬛️🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
+⬛️⬜️⬜️⬜️⬜️🟨⬛️🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️  
+⬛️⬜️⬜️⬜️🟨🟨⬛️🟨🟨⬛️🟧🟧🟧🟧⬛️
+  ⬛🟨🟨🟨⬛️⬛️🟨🟨🟨⬛️⬛️⬛️⬛️  
+    ⬛️⬛️⬛️    ⬛️⬛️⬛️        
+                    
+"""
+
+birdy_player_game_over = """\
+⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️⬛️
+⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨⬛️⬜️⬜️⬛️
+⬛️⬛️  ⬛️🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬜️⬛️
+    ⬛️⬛️⬛️🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
+  ⬛️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
+⬛️⬜️🟨🟨⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬜️⬛️
+⬛️🟨⬛️⬛️⬛️🟨⬛️🟨🟨🟨⬛️⬛️⬛️⬛️⬛️
+  ⬛️🟨🟨🟨⬛️🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
+⬛️⬜️⬜️⬜️⬜️🟨⬛️🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️
+⬛️⬜️⬜️⬜️🟨🟨⬛️🟨🟨⬛️🟧🟧🟧🟧⬛️
+  ⬛🟨🟨🟨⬛️⬛️🟨🟨🟨⬛️⬛️⬛️⬛️
+    ⬛️⬛️⬛️    ⬛️⬛️⬛️
+"""
+
+old_birdy_player = """\
                        
-⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️  
-⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨⬛️⬜️⬛️  
-⬛️⬛️  ⬛️🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️  
+⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️⬛️ 
+⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨⬛️⬜️⬜️⬛️ 
+⬛️⬛️  ⬛️🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬜️⬛️
   ⬛️⬛️⬛️⬛️🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
 ⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
 ⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬜️⬛️  
@@ -231,36 +264,21 @@ birdy_player = """\
                     
 """
 
-birdy_player_game_over = """\
-⬛️⬛️⬛️      ⬛️⬛️⬛️⬛️⬛️
-⬛️🟧⬛️  ⬛️⬛️🟨🟨🟨⬛️⬜️⬛️
-⬛️⬛️  ⬛️🟨🟨🟨🟨⬛️⬜️⬜️⬜️⬛️
-  ⬛️⬛️⬛️⬛️🟨🟨🟨⬛️⬜️⬜⬛️⬜️⬛️
-⬛️⬜️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬛️⬜️⬛️
-⬛️⬜️⬜️⬜️⬜️⬜️⬛️🟨🟨⬛️⬜️⬜️⬜️⬛️
-⬛️🟨⬜️⬜️⬜️🟨⬛️🟨🟨🟨⬛️⬛️⬛️⬛️⬛️
-  ⬛️🟨🟨🟨⬛️🟨🟨🟨⬛️🟧🟧🟧🟧🟧⬛️
-    ⬛️⬛️⬛️🟨🟨🟨⬛️🟧⬛️⬛️⬛️⬛️⬛️
-        ⬛️🟨🟨🟨🟨⬛️🟧🟧🟧🟧⬛️
-          ⬛️⬛️🟨🟨🟨⬛️⬛️⬛️⬛️
-              ⬛️⬛️⬛️
-"""
-
 thon_player = """\
-                            
-   ⬛️⬛️⬛️            ⬛️⬛️ 
+                          
+   ⬛️⬛️⬛️            ⬛️⬛️  
      ⬛️            ⬛️🟧🟧⬛️ 
  ⬛️  ⬛️  ⬛️       ⬛️🟧🟧🟧⬛️ 
    ⬛️  ⬛️        ⬛️⬛️⬛️⬛️⬛️⬛️
-⬛️            ⬛️⬛️⬛️⬛️          
-⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦⬛️⬛️      
-⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️    
+⬛️            ⬛️⬛️⬛️⬛️       
+⬛️⬛️      ⬛️⬛️🟦🟦🟦🟦⬛️⬛️  
+⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️  
 ⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️  
 ⬛️🟦⬜️⬛️🟦⬜️🟦🟦⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
-⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️    
-⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦⬛️⬛️  
-⬛️            ⬛️⬛️⬛️⬛️    
-                      
+⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️⬛️  
+⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦⬛️⬛️⬛️  
+⬛️            ⬛️⬛️⬛️⬛️⬛️    
+                        
 """
 
 thon_player_game_over = """\
@@ -273,9 +291,9 @@ thon_player_game_over = """\
 ⬛️🟦⬛️  ⬛️🟦🟦🟦🟦🟦⬛️🟦⬛️⬛️
 ⬛️🟦🟦⬛️🟦🟦🟦🟦🟦🟦⬛️🟦🟫🟦⬛️
 ⬛️🟦⬜️⬛️🟦⬜️🟦🟦⬜️⬜️⬛️🟦🟦🟦⬛️⬛️
-⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️
-⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦⬛️⬛️
-⬛️            ⬛️⬛️⬛️⬛️
+⬛⬜️⬛️  ⬛️🟦⬜️⬜️⬜️⬜️⬜️⬛️🟦⬛️⬛️
+⬛️⬛️      ⬛️⬛️⬜️⬜️🟦🟦⬛️⬛️⬛️
+⬛️            ⬛️⬛️⬛️⬛️⬛️
 """
 
 player_shadow = """\
@@ -310,6 +328,24 @@ tunnel_up = """\
 
 tunnel_base = """\
    ⬛️🟩🟩🟩🟩🟩🟩⬛   
+"""
+
+tunnel_down_game_over = """\
+⬛️⬛️⬛⬛️⬛️⬛️⬛️⬛️⬛️⬛️
+⬛️🟩🟩🟩🟩🟩🟩🟩🟩⬛️
+⬛️🟩🟩🟩🟩🟩🟩🟩🟩⬛️
+  ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛  
+"""
+
+tunnel_up_game_over = """\
+  ⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛  
+⬛️🟩🟩🟩🟩🟩🟩🟩🟩⬛️
+⬛️🟩🟩🟩🟩🟩🟩🟩🟩⬛️
+⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️⬛️
+"""
+
+tunnel_base_game_over = """\
+  ⬛️🟩🟩🟩🟩🟩🟩⬛  
 """
 
 arrows = """\
@@ -382,54 +418,60 @@ t_counter.callback(counter_timer)
 
 choose_player_flag = False
 
-def clear_screen():
+def clear_screen() -> None:
     uart.write("\x1b[2J\x1b[?25l")
 
-def move(x,y):
+def move(x,y) -> None:
     uart.write("\x1b[{};{}H".format(y,x))
 
-def screen_placement(window_parts = WINDOW_HEIGHT, element_size = 0, mode = 0):
+def screen_placement(window_parts = WINDOW_HEIGHT, element_length = 0, mode = 0) -> int:
     """
-    mode : 0 => middle x
-    mode : 1 => middle middle x
+    mode : 0 => return a data corresponding of the middle of the window_parts choose minus the half 
+                length of the element
+    mode : 1 => return a data corresponding of the middle (of the middle of the window_parts choose)
+                minus the half length of the element
     """
     if mode:
-      placement = ((window_parts//2)//2)-(element_size//2)
+      placement = ((window_parts//2)//2)-(element_length//2)
     else:
-      placement = (window_parts//2)-(element_size//2)
+      placement = (window_parts//2)-(element_length//2)
     return placement
 
-def draw_element(element, x, y):
+def draw_element(element, x, y) -> None:
     for index, line in enumerate(element.splitlines()):
         move(x, y+index)
         uart.write(line)
 
-def splash_screen_loading():
+def splash_screen_loading() -> None:
     clear_screen()
-    draw_element(game_name_label, screen_placement(WINDOW_LENGTH, 130, 0), 20)
-    draw_element(loading_label, screen_placement(WINDOW_LENGTH, 44, 0), 35)
-    draw_element(loading_bar_label, screen_placement(WINDOW_LENGTH, 40, 0), 43)
-    i = 0
+    
+    draw_element(game_name_label, screen_placement(WINDOW_LENGTH, GAME_NAME_LENGTH, 0), 20)
+    draw_element(loading_label, screen_placement(WINDOW_LENGTH, LOADING_LABEL_LENGTH, 0), 35)
+    draw_element(loading_bar_label, screen_placement(WINDOW_LENGTH, LOADING_BAR_LENGTH, 0), 43)
+    
+    loading_value = 0
+
     while (counter_var < 10):
-      delay(500)
+      delay(TIMER_PERIODE_MS)
+  
       if (counter_var % 2 == 0):
-        draw_element(loading_bar_content, screen_placement(WINDOW_LENGTH, 50, 0)+i, 44)
-      i += 5
+        draw_element(loading_bar_content, screen_placement(WINDOW_LENGTH, 50, 0) + loading_value, 44)
+      loading_value += 5
 
     clear_screen()
 
-def draw_nothing(col):
+def draw_nothing(col) -> None:
     for i in range (0, WINDOW_HEIGHT_RUNNING_STATE):
         move(col, i)
         uart.write(" \b")
 
-def create_pattern_tunnel_up(y):
+def create_pattern_tunnel_up(y) -> int:
     tunnel_up_base = """"""
     while(y):
         y -= 1
         tunnel_up_base =  tunnel_up_base + tunnel_base
-        print(tunnel_up_base)
 
+    #print(tunnel_up_base)
     return tunnel_up_base
 
 def create_pattern_tunnel_down(y):
@@ -441,24 +483,27 @@ def create_pattern_tunnel_down(y):
 
     return tunnel_down_base
 
-def draw_tunnels_down(tunnel_down_base, x,y):
+def draw_tunnels_down(tunnel_down_base, x,y) -> None:
     draw_element(tunnel_down, x, y)
     y += 4
     draw_element(tunnel_down_base, x, y)
 
-def draw_tunnels_up(tunnel_up_base, x,y):
+def draw_tunnels_up(tunnel_up_base, x,y) -> None:
     draw_element(tunnel_up, x, y)
     y = 0
     draw_element(tunnel_up_base, x,y)
 
-def game_over(player_caracter ,last_score, x, y):
+def game_over(player_caracter ,last_score, x, y) -> None:
     counter_temp = counter_var
+
     if player_caracter == birdy_player:
       game_over_player = birdy_player_game_over
     else:
       game_over_player = thon_player_game_over
+
     while (counter_var < counter_temp + 6):
       blink_element(game_over_player, player_shadow, x, y)
+
     clear_screen()
     draw_element(game_over_label, screen_placement(WINDOW_LENGTH, 115, 0), 20)
     draw_element(try_again_label, screen_placement(WINDOW_LENGTH, 62, 0), 35)
@@ -466,20 +511,20 @@ def game_over(player_caracter ,last_score, x, y):
     delay(3000)
     clear_screen()
 
-def splash_screen_ending():
+def splash_screen_ending() -> None:
     clear_screen()
-    draw_element(game_name_label, screen_placement(WINDOW_LENGTH, 130, 0), 20)
+    draw_element(game_name_label, screen_placement(WINDOW_LENGTH, GAME_NAME_LENGTH, 0), 20)
     draw_element(see_you_soon_label, screen_placement(WINDOW_LENGTH, 74, 0), 35)
     delay(3000)
     clear_screen()
 
-def user_name():
+def user_name() -> None:
     move(10,10)
     uart.write("ENTER YOUR de :")
     username = input("ENTER YOUR NAME")
     uart.write(username)
 
-def draw_last_score(x, y):
+def draw_last_score(x, y) -> None:
     data = []
     with open('last_scores.txt', 'r') as file_last_scores:
         data = file_last_scores.readlines()
@@ -492,12 +537,12 @@ def draw_last_score(x, y):
     move(x, y)
     uart.write(LAST_SCORE + last_score)
 
-def add_last_score(last_score):
+def add_last_score(last_score) -> None:
     with open('last_scores.txt', 'w') as file_last_scores:
         file_last_scores.write(str(last_score))
 
-def draw_menu():
-    draw_element(game_name_label,screen_placement(WINDOW_LENGTH, 130, 0), 10)
+def draw_menu() -> None:
+    draw_element(game_name_label,screen_placement(WINDOW_LENGTH, GAME_NAME_LENGTH, 0), 10)
     draw_element(button_start, screen_placement(WINDOW_LENGTH, 44, 1), 33)
     draw_element(button_quit,(WINDOW_LENGTH//2)+screen_placement(WINDOW_LENGTH, 44, 1), 33)
     #draw_element(arrows, screen_placement(WINDOW_LENGTH, 32, 0),  (WINDOW_HEIGHT//2)+1)
@@ -508,14 +553,13 @@ def draw_menu():
     while (counter_var < counter_temp + 4):
       blink_element(arrows, arrows_shadow, screen_placement(WINDOW_LENGTH,32,0), (WINDOW_HEIGHT//2)+1)
 
-
-def blink_element(first_element, second_element, x,y):
+def blink_element(first_element, second_element, x,y) -> None:
     if toggle_var:
       draw_element(first_element,x,y)
     else:
       draw_element(second_element, x,y)
 
-def choose_your_player():
+def choose_your_player() -> str:
     clear_screen()
     choose_player_flag = False
 
@@ -563,7 +607,7 @@ def choose_your_player():
     clear_screen()
     return player_choose
 
-def transform_score_counter(score_counter):
+def transform_score_counter(score_counter)  -> str:
     pattern_score_counter = ["","","","",""]
     digits_score_counter = [int(a) for a in str(score_counter)]
     placement = 0
@@ -592,18 +636,18 @@ def transform_score_counter(score_counter):
 
     return pattern_score_counter
 
-def draw_element_bar(player_name):
+def draw_element_bar(player_name) -> None:
     draw_element(line_label, 0, WINDOW_HEIGHT - 4)
     draw_element(score_label, screen_placement(WINDOW_LENGTH, 32, 1) + (WINDOW_LENGTH//2) + 15,WINDOW_HEIGHT - 2)
     draw_element(player_name, 3,WINDOW_HEIGHT-2)
 
-def random_data_for_tunnel_up():
+def random_data_for_tunnel_up() -> int:
     random_data_tunnel_up = random.randrange(3,21)
-    print("random_data_tunnel_up : ",random_data_tunnel_up)
+    #print("random_data_tunnel_up : ",random_data_tunnel_up)
 
     return random_data_tunnel_up
 
-def data_for_tunnel_down(y_tunnel_up, difficulty_level):
+def data_for_tunnel_down(y_tunnel_up : int, difficulty_level) -> int:
     y_tunnel_down = 0
 
     if difficulty_level == "easy":
@@ -615,18 +659,29 @@ def data_for_tunnel_down(y_tunnel_up, difficulty_level):
     if difficulty_level == "impossible":
       y_tunnel_down = y_tunnel_up + TUNNEL_HEIGHT + IMPOSSIBLE_SPACE
   
-    print("y_tunnel_down : ", y_tunnel_down)
+    #print("y_tunnel_down : ", y_tunnel_down)
 
     return y_tunnel_down
 
-def adapt_difficulty_level(score_counter):
+def adapt_difficulty_level(score_counter) -> str:
     if score_counter < 4 :
       difficulty_level = "easy"
-    elif 4 < score_counter < 8:
+    elif 4 <= score_counter < 8:
       difficulty_level = "medium"
-    elif 8 < score_counter < 12:
+    elif 8 <= score_counter < 12:
       difficulty_level = "hard"
     else:
       difficulty_level = "impossible"
 
     return difficulty_level
+
+def attente_bouton_stable(pin, state):
+    timer = 0
+    while timer < 5:
+      if pin.value() == state:
+        timer += 1
+      else:
+        timer = 0
+        return 0
+      delay(1)
+    return 1

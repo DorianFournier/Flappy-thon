@@ -1,26 +1,31 @@
-from constants import PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL, X_PLAYER_CARACTER
+from constants import ACC_DATA_MAXIMUM_TO_START, ACC_DATA_MINIMUM_TO_QUIT, PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL, X_PLAYER_CARACTER
 import lis3dsh_driver
 from commun import *
 
 end_game_state = False
 game_is_running_state = False
+
 erase_old_tunnel = False
 tunnel_already_draw = False
-start_or_quit = 0
-player_caracter = """"""
-i = 0
+
+start_or_quit_menu = 0
+
+player_caracter = ""
 player_caracter_name = ""
 
-splash_screen_loading()
+i = 0
+
 lis3dsh_driver.init_acc()
+splash_screen_loading()
 
 while(not end_game_state):
     draw_menu()
 
-    while(-300 < start_or_quit < 300):
-        start_or_quit = lis3dsh_driver.get_acc_value()
+    while(ACC_DATA_MAXIMUM_TO_START < start_or_quit_menu < ACC_DATA_MINIMUM_TO_QUIT):
+        start_or_quit_menu = lis3dsh_driver.get_acc_value()
         blink_element(arrows, arrows_shadow, screen_placement(WINDOW_LENGTH,32,0), (WINDOW_HEIGHT//2)+1)
-        if start_or_quit < -300:
+
+        if start_or_quit_menu < ACC_DATA_MAXIMUM_TO_START:
             game_is_running_state = True 
             player_caracter = choose_your_player()
             if player_caracter == birdy_player:
@@ -28,10 +33,10 @@ while(not end_game_state):
             else:
                 player_caracter_name = thon_player_label
             draw_element_bar(player_caracter_name)
-        elif start_or_quit > 300:
+        elif start_or_quit_menu > ACC_DATA_MINIMUM_TO_QUIT:
             end_game_state = True
 
-    y_player_caracter = screen_placement(WINDOW_HEIGHT, 14, 0)
+    y_player_caracter = screen_placement(WINDOW_HEIGHT, PLAYER_HEIGHT, 0)
 
     x_tunnel = START_X_TUNNEL
     y_tunnel_up = 0
@@ -44,17 +49,18 @@ while(not end_game_state):
     tunnel_down_base = ""
 
     while(game_is_running_state):
-        adapt_difficulty_level(score_counter)
+        difficulty_level = adapt_difficulty_level(score_counter)
         pattern_score_counter = transform_score_counter(score_counter)
         placement = 0
         for pattern in pattern_score_counter:
             draw_element(pattern, screen_placement(WINDOW_LENGTH, 32, 1) + (WINDOW_LENGTH//2) + 48 + placement, WINDOW_HEIGHT - 2)
             placement += 6
 
-        start_or_quit = 0
+        start_or_quit_menu = 0
         if (y_player_caracter > 0) and (y_player_caracter < 40):
             #print(f"y_player_caracter = {y_player_caracter}")
             if push_button.value():
+            #if attente_bouton_stable(push_button, 1):
                 if y_player_caracter == 1:
                     pass
                 else:
@@ -91,10 +97,12 @@ while(not end_game_state):
             x_tunnel = START_X_TUNNEL
 
         if (X_PLAYER_CARACTER + PLAYER_LENGTH) >= x_tunnel:
+            # collision with lower tunnel
             if y_player_caracter <= (y_tunnel_up + TUNNEL_HEIGHT):
                 draw_element(player_shadow, X_PLAYER_CARACTER, y_player_caracter + 1)
                 game_over(player_caracter, score_counter, X_PLAYER_CARACTER, y_player_caracter)
                 game_is_running_state = False
+            # collision with upper tunnel
             if (y_player_caracter + PLAYER_HEIGHT) >= y_tunnel_down:
                 draw_element(player_shadow, X_PLAYER_CARACTER, y_player_caracter)
                 game_over(player_caracter, score_counter, X_PLAYER_CARACTER, y_player_caracter + 1)
