@@ -1,14 +1,14 @@
 import lis3dsh_driver
 
-from constants import ACC_DATA_MAXIMUM_TO_START, ACC_DATA_MINIMUM_TO_QUIT,\
-    PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL, X_PLAYER_CARACTER,\
-    WINDOW_HEIGHT, WINDOW_LENGTH, TUNNEL_HEIGHT
-from commun import splash_screen_loading, splash_screen_ending, draw_menu,\
+from constants import ACC_DATA_MOVE_RIGHT, ACC_DATA_MOVE_LEFT,\
+    PLAYER_HEIGHT, PLAYER_LENGTH, START_X_TUNNEL, TUNNEL_LENGTH,\
+    X_PLAYER_CARACTER, WINDOW_HEIGHT, WINDOW_LENGTH, TUNNEL_HEIGHT
+from commun import coo_y__for_tunnel_up, coo_y_for_tunnel_down,\
+    splash_screen_loading, splash_screen_ending, draw_menu,\
     blink_element, screen_placement, choose_your_player, draw_element,\
     draw_element_bar, adapt_difficulty_level, transform_score_counter,\
-    push_button, game_over, random_data_for_tunnel_up, data_for_tunnel_down,\
-    create_pattern_tunnel_down, create_pattern_tunnel_up, draw_tunnels_down,\
-    draw_tunnels_up, draw_nothing
+    push_button, game_over, create_pattern_tunnel_down, draw_nothing,\
+    create_pattern_tunnel_up, draw_tunnels_down, draw_tunnels_up
 from graphic_elements import arrows, arrows_shadow, birdy_player_label,\
     thon_player_label, player_shadow, birdy_player
 
@@ -16,14 +16,13 @@ end_game_state = False
 game_is_running_state = False
 
 erase_old_tunnel = False
-tunnel_already_draw = False
 
 start_or_quit_menu = 0
 
 player_caracter = ""
 player_caracter_name = ""
 
-i = 0
+column = 0
 
 lis3dsh_driver.init_acc()
 splash_screen_loading()
@@ -31,12 +30,12 @@ splash_screen_loading()
 while(not end_game_state):
     draw_menu()
 
-    while(ACC_DATA_MAXIMUM_TO_START < start_or_quit_menu < ACC_DATA_MINIMUM_TO_QUIT):
+    while(ACC_DATA_MOVE_LEFT < start_or_quit_menu < ACC_DATA_MOVE_RIGHT):
         start_or_quit_menu = lis3dsh_driver.get_acc_value()
         blink_element(arrows, arrows_shadow, screen_placement(
             WINDOW_LENGTH, 32, 0), (WINDOW_HEIGHT//2) + 1)
 
-        if start_or_quit_menu < ACC_DATA_MAXIMUM_TO_START:
+        if start_or_quit_menu < ACC_DATA_MOVE_LEFT:
             game_is_running_state = True
             player_caracter = choose_your_player()
             if player_caracter == birdy_player:
@@ -44,7 +43,7 @@ while(not end_game_state):
             else:
                 player_caracter_name = thon_player_label
             draw_element_bar(player_caracter_name)
-        elif start_or_quit_menu > ACC_DATA_MINIMUM_TO_QUIT:
+        elif start_or_quit_menu > ACC_DATA_MOVE_RIGHT:
             end_game_state = True
 
     y_player_caracter = screen_placement(WINDOW_HEIGHT, PLAYER_HEIGHT, 0)
@@ -69,10 +68,10 @@ while(not end_game_state):
             placement += 6
 
         start_or_quit_menu = 0
-        if (y_player_caracter > 0) and (y_player_caracter < 40):
+        if (y_player_caracter > 1) and (y_player_caracter < 40):
             #print(f"y_player_caracter = {y_player_caracter}")
             if push_button.value():
-                if y_player_caracter == 1:
+                if y_player_caracter == 2:
                     pass
                 else:
                     y_player_caracter = y_player_caracter - 1
@@ -83,8 +82,9 @@ while(not end_game_state):
                 draw_element(player_caracter, X_PLAYER_CARACTER,
                              y_player_caracter)
         else:
-            if(y_player_caracter == 0):
-                y_player_caracter = 1
+            if(y_player_caracter == 1):
+                y_player_caracter = 2
+                # collision with the ground
             if(y_player_caracter == 40):
                 draw_element(player_shadow, X_PLAYER_CARACTER,
                              y_player_caracter)
@@ -96,12 +96,13 @@ while(not end_game_state):
 
         if not tunnel_already_draw:
             tunnel_already_draw = True
-            y_tunnel_up = random_data_for_tunnel_up()
-            y_tunnel_down = data_for_tunnel_down(y_tunnel_up, difficulty_level)
+            y_tunnel_up = coo_y__for_tunnel_up()
+            y_tunnel_down = coo_y_for_tunnel_down(
+                y_tunnel_up, difficulty_level)
             tunnel_up_base = create_pattern_tunnel_up(y_tunnel_up)
             tunnel_down_base = create_pattern_tunnel_down(y_tunnel_down)
 
-        draw_tunnels_up(tunnel_up_base, x_tunnel, y_tunnel_up)
+        draw_tunnels_up(tunnel_up_base, x_tunnel)
         draw_tunnels_down(tunnel_down_base, x_tunnel, y_tunnel_down)
 
         x_tunnel -= 1
@@ -117,7 +118,7 @@ while(not end_game_state):
                 draw_element(player_shadow, X_PLAYER_CARACTER,
                              y_player_caracter + 1)
                 game_over(player_caracter, score_counter,
-                          X_PLAYER_CARACTER, y_player_caracter)
+                          X_PLAYER_CARACTER, y_player_caracter + 1)
                 game_is_running_state = False
             # collision with lower tunnel
             if (y_player_caracter + PLAYER_HEIGHT) >= y_tunnel_down:
@@ -128,10 +129,10 @@ while(not end_game_state):
                 game_is_running_state = False
 
         if erase_old_tunnel:
-            i += 1
-            draw_nothing(i)
-            if i == 24:
+            column += 1
+            draw_nothing(column)
+            if column == TUNNEL_LENGTH:
                 erase_old_tunnel = False
-                i = 0
+                column = 0
 
 splash_screen_ending()
