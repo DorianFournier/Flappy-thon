@@ -18,7 +18,7 @@
 <br />
 <div align="center">
   <a href="https://github.com/DorianFournier/Flappy-thon">
-    <img src="images/birdy.png" alt="Thon player" width="140" height="120">
+    <img src="images/birdy.png" alt="Thon player" width="150" height="120">
   </a>
 
   <h3 align="center">Flappy-Thon</h3>
@@ -89,7 +89,7 @@ Development tools used :
 * Visual Studio 
 * Git and GitHub 🙂
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">[<a href="#top">back to top</a>]</p>
 
 
 
@@ -99,10 +99,10 @@ Development tools used :
 - How we say "Tuna fish" in French ? 
   - We say "Thon"
 
-Here we go, after this unbelivable French course, you understand why the game name is "Flappy-Thon"
+Here we go, after this unbelivable French course, you know why the game name is "Flappy-Thon"
 
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">[<a href="#top">back to top</a>]</p>
 
 
 
@@ -188,13 +188,15 @@ Zxiting DFU...
 Finished
 ```
 
+The flashing part is terminated. Now you need to copy your python files into the board (you can use the tool file for this).
+
 Now, you can start a microPython terminal :
 ```sh
 sudo screen /dev/ttyACM0
 ```
 The REPL mode is launched...
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">[<a href="#top">back to top</a>]</p>
 
 
 
@@ -206,17 +208,18 @@ To start the program, import the file "flappython.py".
 >>> import flappython
 ```
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">[<a href="#top">back to top</a>]</p>
 
 
 
 #### Tool file
 
+_Don't forget to modify this file with your user name_
 You can use tool file for copying and umount correctly the board before test it.
 ```sh
 sudo bash cp_project.sh
 ```
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">[<a href="#top">back to top</a>]</p>
 
 
 
@@ -225,7 +228,7 @@ sudo bash cp_project.sh
 - Official documentation for microPython : https://docs.micropython.org/en/latest/index.html
 - GitHub microPython :https://github.com/micropython/micropython
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">[<a href="#top">back to top</a>]</p>
 
 
 
@@ -234,7 +237,7 @@ sudo bash cp_project.sh
 
 Distributed under the MIT License. See `LICENSE.txt` for more information.
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">[<a href="#top">back to top</a>]</p>
 
 
 
@@ -244,7 +247,7 @@ Distributed under the MIT License. See `LICENSE.txt` for more information.
 https://user-images.githubusercontent.com/54947603/166462824-3a0d768c-3650-460f-be0c-68dacfa28426.mp4
 
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+<p align="right">[<a href="#top">back to top</a>]</p>
 
 
 
